@@ -1,6 +1,6 @@
 ---
 import Navigation from '../components/Navigation.astro'
-import { DarkMode, SkipLink } from 'accessible-astro-components'
+import { DarkMode, Link, SkipLink } from 'accessible-astro-components'
 import { Icon } from 'astro-icon/components'
 
 /**
@@ -14,13 +14,13 @@ import { Icon } from 'astro-icon/components'
   <SkipLink />
   <Navigation>
     <li class="menu-item">
-      <a href="/">Home</a>
+      <Link href="/">Home</Link>
     </li>
     <li class="menu-item">
-      <a href="/blog/">Blog</a>
+      <Link href="/blog/">Blog</Link>
     </li>
     <li class="menu-item">
-      <a href="/portfolio/">Portfolio</a>
+      <Link href="/portfolio/">Portfolio</Link>
     </li>
     <li class="menu-item has-dropdown">
       <button aria-haspopup="true" aria-expanded="false">
@@ -29,36 +29,36 @@ import { Icon } from 'astro-icon/components'
       </button>
       <ul class="dropdown-menu">
         <li class="submenu-item">
-          <a href="/accessibility-statement">Accessibility statement</a>
+          <Link href="/accessibility-statement">Accessibility statement</Link>
         </li>
         <li class="submenu-item">
-          <a href="/accessible-components">Accessible components</a>
+          <Link href="/accessible-components">Accessible components</Link>
         </li>
         <li class="submenu-item">
-          <a href="/color-contrast-checker">Color contrast checker</a>
+          <Link href="/color-contrast-checker">Color contrast checker</Link>
         </li>
         <li class="submenu-item">
-          <a href="/markdown-page/">Markdown page</a>
+          <Link href="/markdown-page/">Markdown page</Link>
         </li>
         <li class="submenu-item">
-          <a href="/mdx-page/">MDX page</a>
+          <Link href="/mdx-page/">MDX page</Link>
         </li>
         <li class="submenu-item">
-          <a href="/404-page">404 page</a>
+          <Link href="/404-page">404 page</Link>
         </li>
       </ul>
     </li>
     <li class="menu-item">
-      <a href="/contact/">Contact</a>
+      <Link href="/contact/">Contact</Link>
     </li>
     <li class="menu-item highlight">
-      <a href="https://accessible-astro.incluud.dev/">Docs </a>
+      <Link href="https://accessible-astro.incluud.dev/">Docs </Link>
     </li>
     <li class="menu-item type-icon animate-rotate">
-      <a href="https://github.com/incluud/accessible-astro-starter">
+      <Link href="https://github.com/incluud/accessible-astro-starter">
         <Icon name="lucide:github" />
         <span class="sr-only">Go to the GitHub page</span>
-      </a>
+      </Link>
     </li>
     <li class="menu-item type-icon animate-rotate">
       <DarkMode>
