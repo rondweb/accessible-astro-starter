@@ -5,14 +5,16 @@ import Feature from '@components/Feature.astro'
 import Counter from '@components/Counter.astro'
 import ContentMedia from '@components/ContentMedia.astro'
 import ExternalLink from '@components/ExternalLink.astro'
-import { Accordion, AccordionItem, Avatar, AvatarGroup } from 'accessible-astro-components'
+import FeaturedProjects from '@components/FeaturedProjects.astro'
+import FeaturedPosts from '@components/FeaturedPosts.astro'
+import { Accordion, AccordionItem, Avatar, AvatarGroup, Button, Heading, Link } from 'accessible-astro-components'
 ---
 
 <DefaultLayout title="Home">
   <Hero />
   <section class="my-64">
     <div class="container">
-      <h2 class="mb-16 text-6xl">Features</h2>
+      <Heading level="h2" class="mb-8">Features</Heading>
       <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3">
         <Feature icon="lucide:accessibility" title="Accessible by default">
           Keyboard navigation, focus indicators, ARIA labels, semantic HTML, and more. This theme is designed to be
@@ -47,7 +49,7 @@ import { Accordion, AccordionItem, Avatar, AvatarGroup } from 'accessible-astro-
     </div>
   </section>
   <ContentMedia imgSrc="/accessible-components.webp">
-    <h2>Accessible components</h2>
+    <Heading level="h2">Accessible components</Heading>
     <p class="text-2xl">
       This theme provides plenty of tried and tested Accessible Astro Components. Some are native to this theme and a
       lot of others are integrated using a <ExternalLink href="https://github.com/incluud/accessible-astro-components"
@@ -56,22 +58,24 @@ import { Accordion, AccordionItem, Avatar, AvatarGroup } from 'accessible-astro-
     </p>
   </ContentMedia>
   <ContentMedia imgSrc="/wcag-compliant.webp" reverseImg={true}>
-    <h2>WCAG 2.2 AA compliant</h2>
+    <Heading level="h2">WCAG 2.2 AA compliant</Heading>
     <p class="text-2xl">
       Using semantic HTML, landmarks, skip links, screen reader friendly content, aria-labels, keyboard accessible
       navigation and components, clear outlines and tab indicators and the right color contrast, you're more certain of
       reaching WCAG AA compliance.
     </p>
   </ContentMedia>
+  <FeaturedProjects />
+  <FeaturedPosts />
   <section class="my-64">
     <div class="container grid grid-cols-1 gap-12 md:grid-cols-2">
       <div class="flex flex-col items-start gap-4">
-        <h2 class="text-6xl">FAQ</h2>
+        <Heading level="h2">FAQ</Heading>
         <p class="text-2xl">
           This section demonstrates how to effectively use the Accordion component to organize and display frequently
           asked questions in an accessible and user-friendly way.
         </p>
-        <a class="button" href="/faq">Contact support team</a>
+        <Link href="/faq" isButton type="primary">Contact support team</Link>
       </div>
       <div class="space-content">
         <Accordion>
@@ -112,8 +116,8 @@ import { Accordion, AccordionItem, Avatar, AvatarGroup } from 'accessible-astro-
               To make custom components accessible, focus on these key aspects: use semantic HTML where possible,
               implement proper keyboard support, add appropriate ARIA attributes, manage focus when needed, and ensure
               adequate color contrast. Always test with screen readers and keyboard navigation. Consider using
-              established design patterns from the <a href="https://www.w3.org/WAI/ARIA/apg/patterns/"
-                >ARIA Authoring Practices Guide</a
+              established design patterns from the <Link href="https://www.w3.org/WAI/ARIA/apg/patterns/"
+                >ARIA Authoring Practices Guide</Link
               >.
             </p>
           </AccordionItem>
@@ -123,7 +127,7 @@ import { Accordion, AccordionItem, Avatar, AvatarGroup } from 'accessible-astro-
   </section>
   <section class="my-64">
     <div class="space-content container">
-      <h2 class="text-6xl">Our community</h2>
+      <Heading level="h2">Our community</Heading>
       <p class="text-2xl">
         We're a community of developers who are passionate about making the web more accessible. We're always looking
         for new ways to improve the accessibility of the web.
@@ -143,7 +147,7 @@ import { Accordion, AccordionItem, Avatar, AvatarGroup } from 'accessible-astro-
   </section>
   <section class="mt-64 mb-32">
     <div class="container">
-      <h2 class="mb-16 text-6xl">Impact in numbers</h2>
+      <Heading level="h2" class="mb-16">Impact in numbers</Heading>
       <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 md:grid-cols-4">
         <Counter count="900+" title="Stars" sub="On GitHub" />
         <Counter count="25+" title="Accessible" sub="Components" />
