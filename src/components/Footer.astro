@@ -1,7 +1,7 @@
 ---
 import CallToAction from './CallToAction.astro'
 import Logo from './Logo.astro'
-import { Link } from 'accessible-astro-components'
+import { Heading, Link } from 'accessible-astro-components'
 
 /**
  * Footer Component
@@ -14,10 +14,10 @@ const currentYear = new Date().getFullYear()
 <footer>
   <CallToAction />
   <section class="py-20">
-    <h2 class="sr-only">Footer</h2>
+    <Heading level="h2" class="sr-only">Footer</Heading>
     <div class="container grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
       <div class="flex flex-col gap-4">
-        <h3 class="text-2xl font-bold">Theme features</h3>
+        <Heading level="h3" size="h6">Theme features</Heading>
         <ul class="flex flex-col gap-2">
           <li><Link href="/accessibility-statement">Accessibility statement</Link></li>
           <li><Link href="/accessible-components">Accessible components</Link></li>
@@ -28,7 +28,7 @@ const currentYear = new Date().getFullYear()
         </ul>
       </div>
       <div class="flex flex-col gap-4">
-        <h3 class="text-2xl font-bold">Incluud projects</h3>
+        <Heading level="h3" size="h6">Incluud projects</Heading>
         <ul class="flex flex-col gap-2">
           <li>
             <Link isExternal href="https://accessible-astro-starter.incluud.dev">Accessible Astro Starter</Link>
@@ -50,7 +50,7 @@ const currentYear = new Date().getFullYear()
         </ul>
       </div>
       <div class="flex flex-col gap-4">
-        <h3 class="text-2xl font-bold">Developer tools</h3>
+        <Heading level="h3" size="h6">Developer tools</Heading>
         <ul class="flex flex-col gap-2">
           <li>
             <Link isExternal href="https://chrispederick.com/work/web-developer/">Web Developer Extension</Link>

@@ -7,6 +7,7 @@ import ContentMedia from '@components/ContentMedia.astro'
 import FeaturedProjects from '@components/FeaturedProjects.astro'
 import FeaturedPosts from '@components/FeaturedPosts.astro'
 import { Accordion, AccordionItem, Avatar, AvatarGroup, Heading, Link } from 'accessible-astro-components'
+import { Icon } from 'astro-icon/components'
 ---
 
 <DefaultLayout title="Home">
@@ -75,7 +76,10 @@ import { Accordion, AccordionItem, Avatar, AvatarGroup, Heading, Link } from 'ac
           This section demonstrates how to effectively use the Accordion component to organize and display frequently
           asked questions in an accessible and user-friendly way.
         </p>
-        <Link href="/faq" isButton type="primary">Contact support team</Link>
+        <Link href="/faq" isButton type="primary" animateOnHover animationType="boop">
+          <Icon name="lucide:headset" size=" 1.5rem" />
+          Contact support team
+        </Link>
       </div>
       <div class="space-content">
         <Accordion>

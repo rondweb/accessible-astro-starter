@@ -3,6 +3,7 @@ import DefaultLayout from '@layouts/DefaultLayout.astro'
 import PageHeader from '@components/PageHeader.astro'
 import SocialShares from '@components/SocialShares.astro'
 import BreakoutImage from '@components/BreakoutImage.astro'
+import { Heading } from 'accessible-astro-components'
 import { Image } from 'astro:assets'
 
 export async function getStaticPaths() {
@@ -65,7 +66,7 @@ const author = {
   </section>
   <section class="my-12">
     <div class="narrow space-content container">
-      <h2>Demo content</h2>
+      <Heading level="h2">Demo content</Heading>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur
         adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
@@ -107,7 +108,7 @@ const author = {
         ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur
         adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
       </p>
-      <h3>Demo content</h3>
+      <Heading level="h3">Demo content</Heading>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur
         adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.
@@ -119,7 +120,7 @@ const author = {
         <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</li>
         <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.</li>
       </ul>
-      <h3>Breakout Image</h3>
+      <Heading level="h3">Breakout Image</Heading>
       <p>
         This image breaks out of the narrow container on larger screens, creating a more immersive visual experience.
       </p>
@@ -128,7 +129,7 @@ const author = {
         Notice how the image above extends beyond the boundaries of the text content, creating visual interest and
         drawing attention to important visual elements.
       </p>
-      <h3>Demo content</h3>
+      <Heading level="h3">Demo content</Heading>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur
         adipisicing elit. Quisquam, quos. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos. Lorem
@@ -139,7 +140,7 @@ const author = {
   </section>
   <section class="my-12">
     <div class="narrow space-content container">
-      <h2>Share this post</h2>
+      <Heading level="h2">Share this post</Heading>
       <p>Like this post? Share it with your friends!</p>
       <SocialShares />
     </div>

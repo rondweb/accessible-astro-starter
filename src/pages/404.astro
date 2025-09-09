@@ -1,17 +1,22 @@
 ---
 import DefaultLayout from '@layouts/DefaultLayout.astro'
+import { Heading, Link } from 'accessible-astro-components'
+import { Icon } from 'astro-icon/components'
 ---
 
 <DefaultLayout title="404">
   <section class="my-12">
     <div class="container">
-      <h1>404</h1>
+      <Heading level="h1">404</Heading>
     </div>
   </section>
   <section class="my-12">
     <div class="space-content container">
       <p class="text-2xl">This page does not exist. Don't worry though, we got you.</p>
-      <a class="button" href="/">Let's get you home Astronout 🚀</a>
+      <Link href="/" isButton type="primary" animateOnHover animationType="nudge">
+        Let's get you home Astronout
+        <Icon name="lucide:rocket" size="1.5rem" />
+      </Link>
     </div>
   </section>
 </DefaultLayout>

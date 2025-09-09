@@ -1,4 +1,5 @@
 ---
+import { Link } from 'accessible-astro-components'
 import { Image } from 'astro:assets'
 import logo from '../assets/img/logo.svg'
 
@@ -18,13 +19,7 @@ interface Props {
 const { loading = 'eager' }: Props = Astro.props
 ---
 
-<a href="/" class="flex items-center gap-2 !no-underline">
+<Link href="/" class="flex items-center gap-2 !no-underline">
   <Image src={logo} alt="Accessible Astro Logo" width="47" height="37" loading={loading} />
   <span class="font-bold">Accessible Astro</span>
-</a>
-
-<style lang="scss">
-  a {
-    color: var(--foreground-color);
-  }
-</style>
+</Link>

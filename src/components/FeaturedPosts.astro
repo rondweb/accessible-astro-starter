@@ -1,5 +1,6 @@
 ---
 import { Card, Heading, Link } from 'accessible-astro-components'
+import { Icon } from 'astro-icon/components'
 
 // Import images directly for optimization
 import postImage1 from '@assets/images/posts/post-image-1.png'
@@ -83,7 +84,10 @@ const featuredPosts: Post[] = data.slice(0, limit).map((post: any) => {
       }
     </div>
     <div class="mt-12">
-      <Link href="/blog/" isButton> Read all posts </Link>
+      <Link href="/blog/" isButton animateOnHover animationType="nudge">
+        Read all posts
+        <Icon name="lucide:arrow-right" size="1.5rem" />
+      </Link>
     </div>
   </div>
 </section>

@@ -1,5 +1,6 @@
 ---
 import { Card, Heading, Link } from 'accessible-astro-components'
+import { Icon } from 'astro-icon/components'
 import { getCollection } from 'astro:content'
 
 // Import images directly for optimization
@@ -61,7 +62,10 @@ const featuredProjects = projects.slice(0, limit).map((project, index) => ({
       }
     </div>
     <div class="mt-12">
-      <Link href="/portfolio/" isButton> View all projects </Link>
+      <Link href="/portfolio/" isButton animateOnHover animationType="nudge">
+        View all projects
+        <Icon name="lucide:arrow-right" size="1.5rem" />
+      </Link>
     </div>
   </div>
 </section>
