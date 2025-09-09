@@ -176,12 +176,60 @@ const components = [
 
         <Heading level="h2" id="badge">Badge</Heading>
         <p>The Badge component is used to display a badge with a type and a pulse effect.</p>
+        <Heading level="h3">Default</Heading>
         <div class="flex flex-wrap gap-2">
           <Badge type="default" pulse>Default</Badge>
           <Badge type="info">Info</Badge>
           <Badge type="success">Success</Badge>
           <Badge type="warning">Warning</Badge>
           <Badge type="error">Error</Badge>
+        </div>
+
+        <Heading level="h3">Notification</Heading>
+        <div class="flex flex-wrap gap-4">
+          <div style="position: relative; display: inline-flex;">
+            <button style="background: none; border: none; cursor: pointer;">
+              <Icon name="lucide:mail" size="1.5rem" />
+              <span class="sr-only">3 unread messages</span>
+            </button>
+            <Badge type="error" isCircular size="sm" style="position: absolute; top: -5px; right: -5px;"> 3 </Badge>
+          </div>
+          <div style="position: relative; display: inline-flex;">
+            <button style="background: none; border: none; cursor: pointer;">
+              <Icon name="lucide:bell" size="1.5rem" />
+              <span class="sr-only">5 new notifications</span>
+            </button>
+            <Badge type="info" isCircular size="sm" style="position: absolute; top: -5px; right: -5px;"> 5 </Badge>
+          </div>
+          <div style="position: relative; display: inline-flex;">
+            <button style="background: none; border: none; cursor: pointer;">
+              <Icon name="lucide:message-circle" size="1.5rem" />
+              <span class="sr-only">2 new comments</span>
+            </button>
+            <Badge type="success" isCircular size="sm" style="position: absolute; top: -5px; right: -5px;"> 2 </Badge>
+          </div>
+        </div>
+
+        <Heading level="h3">Interactive</Heading>
+        <div class="flex flex-wrap gap-2">
+          <Badge
+            type="info"
+            isButton
+            animateOnHover
+            animationType="rotate"
+            animationIntensity={20}
+            label="Refresh content"
+          >
+            <Icon name="lucide:refresh-cw" size="1rem" />
+            Refresh
+          </Badge>
+
+          <Badge type="success" isButton animateOnHover animationType="bouncing" label="Approve item">
+            <Icon name="lucide:check-circle" size="1rem" />
+            Approve
+          </Badge>
+
+          <Badge type="warning" pulse> New feature (pulse) </Badge>
         </div>
 
         <Heading level="h2" id="breadcrumbs">Breadcrumbs</Heading>
@@ -360,7 +408,7 @@ const components = [
             <Icon name="lucide:link" />
             Icon button link</Link
           >
-          <Link href="/" isButton type="default" animateOnHover animationType="boop" type="primary">
+          <Link href="/" isButton animateOnHover animationType="boop" type="primary">
             <Icon name="lucide:link" />
             Animated icon button link</Link
           >
@@ -514,17 +562,19 @@ const components = [
       </div>
       <div class="components-navigation space-content">
         <Heading level="h3" size="h4">On this page</Heading>
-        <ul class="list-none">
-          {
-            components.map((component) => (
-              <li class="my-1">
-                <a class="text-sm" href={`#${component.id}`}>
-                  {component.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+        <nav aria-label="On this page">
+          <ul class="list-none">
+            {
+              components.map((component) => (
+                <li class="my-1">
+                  <a class="text-sm" href={`#${component.id}`}>
+                    {component.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
       </div>
     </div>
   </section>
