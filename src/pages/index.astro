@@ -4,10 +4,9 @@ import Hero from '@components/Hero.astro'
 import Feature from '@components/Feature.astro'
 import Counter from '@components/Counter.astro'
 import ContentMedia from '@components/ContentMedia.astro'
-import ExternalLink from '@components/ExternalLink.astro'
 import FeaturedProjects from '@components/FeaturedProjects.astro'
 import FeaturedPosts from '@components/FeaturedPosts.astro'
-import { Accordion, AccordionItem, Avatar, AvatarGroup, Button, Heading, Link } from 'accessible-astro-components'
+import { Accordion, AccordionItem, Avatar, AvatarGroup, Heading, Link } from 'accessible-astro-components'
 ---
 
 <DefaultLayout title="Home">
@@ -52,8 +51,9 @@ import { Accordion, AccordionItem, Avatar, AvatarGroup, Button, Heading, Link } 
     <Heading level="h2">Accessible components</Heading>
     <p class="text-2xl">
       This theme provides plenty of tried and tested Accessible Astro Components. Some are native to this theme and a
-      lot of others are integrated using a <ExternalLink href="https://github.com/incluud/accessible-astro-components"
-        >separate package</ExternalLink
+      lot of others are integrated using a <Link
+        isExternal
+        href="https://github.com/incluud/accessible-astro-components">separate package</Link
       >. They'll get you up and running in building an accessible solution for your visitors.
     </p>
   </ContentMedia>
