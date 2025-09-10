@@ -189,21 +189,21 @@ const components = [
         <div class="flex flex-wrap gap-4">
           <div style="position: relative; display: inline-flex;">
             <button style="background: none; border: none; cursor: pointer;">
-              <Icon name="lucide:mail" size="1.5rem" />
+              <Icon aria-hidden="true" name="lucide:mail" size="1.5rem" />
               <span class="sr-only">3 unread messages</span>
             </button>
             <Badge type="error" isCircular size="sm" style="position: absolute; top: -5px; right: -5px;"> 3 </Badge>
           </div>
           <div style="position: relative; display: inline-flex;">
             <button style="background: none; border: none; cursor: pointer;">
-              <Icon name="lucide:bell" size="1.5rem" />
+              <Icon aria-hidden="true" name="lucide:bell" size="1.5rem" />
               <span class="sr-only">5 new notifications</span>
             </button>
             <Badge type="info" isCircular size="sm" style="position: absolute; top: -5px; right: -5px;"> 5 </Badge>
           </div>
           <div style="position: relative; display: inline-flex;">
             <button style="background: none; border: none; cursor: pointer;">
-              <Icon name="lucide:message-circle" size="1.5rem" />
+              <Icon aria-hidden="true" name="lucide:message-circle" size="1.5rem" />
               <span class="sr-only">2 new comments</span>
             </button>
             <Badge type="success" isCircular size="sm" style="position: absolute; top: -5px; right: -5px;"> 2 </Badge>
@@ -220,12 +220,12 @@ const components = [
             animationIntensity={20}
             label="Refresh content"
           >
-            <Icon name="lucide:refresh-cw" size="1rem" />
+            <Icon aria-hidden="true" name="lucide:refresh-cw" size="1rem" />
             Refresh
           </Badge>
 
           <Badge type="success" isButton animateOnHover animationType="bouncing" label="Approve item">
-            <Icon name="lucide:check-circle" size="1rem" />
+            <Icon aria-hidden="true" name="lucide:check-circle" size="1rem" />
             Approve
           </Badge>
 
@@ -243,7 +243,7 @@ const components = [
         <Heading level="h3">With icons</Heading>
         <Breadcrumbs>
           <BreadcrumbsItem href="/" label="Home" hasIcon>
-            <Icon name="lucide:home" slot="icon" />
+            <Icon aria-hidden="true" name="lucide:home" slot="icon" />
           </BreadcrumbsItem>
           <BreadcrumbsItem href="/docs" label="Documentation" />
           <BreadcrumbsItem label="Breadcrumbs" currentPage={true} />
@@ -252,12 +252,12 @@ const components = [
         <Breadcrumbs>
           <BreadcrumbsItem href="/" label="Home">
             <span slot="separator" class="separator" aria-hidden="true">
-              <Icon name="lucide:chevron-right" />
+              <Icon aria-hidden="true" name="lucide:chevron-right" />
             </span>
           </BreadcrumbsItem>
           <BreadcrumbsItem href="/docs" label="Documentation">
             <span slot="separator" class="separator" aria-hidden="true">
-              <Icon name="lucide:chevron-right" />
+              <Icon aria-hidden="true" name="lucide:chevron-right" />
             </span>
           </BreadcrumbsItem>
           <BreadcrumbsItem label="Breadcrumbs" currentPage={true} />
@@ -265,14 +265,14 @@ const components = [
         <Heading level="h3">With custom home icon</Heading>
         <Breadcrumbs>
           <BreadcrumbsItem href="/" label="Home" hasIcon>
-            <Icon name="lucide:home" slot="icon" />
+            <Icon aria-hidden="true" name="lucide:home" slot="icon" />
             <span slot="separator" class="separator" aria-hidden="true">
-              <Icon name="lucide:chevron-right" />
+              <Icon aria-hidden="true" name="lucide:chevron-right" />
             </span>
           </BreadcrumbsItem>
           <BreadcrumbsItem href="/docs" label="Documentation">
             <span slot="separator" class="separator" aria-hidden="true">
-              <Icon name="lucide:chevron-right" />
+              <Icon aria-hidden="true" name="lucide:chevron-right" />
             </span>
           </BreadcrumbsItem>
           <BreadcrumbsItem label="Breadcrumbs" currentPage={true} />
@@ -307,8 +307,10 @@ const components = [
         </div>
         <Heading level="h3">Icon</Heading>
         <div class="flex flex-wrap gap-2">
-          <Button><Icon name="lucide:sparkles" size="24" />Icon button</Button>
-          <Button animateOnHover><Icon name="lucide:sparkles" size="24" />Animated icon button</Button>
+          <Button><Icon aria-hidden="true" name="lucide:sparkles" size="24" />Icon button</Button>
+          <Button animateOnHover
+            ><Icon aria-hidden="true" name="lucide:sparkles" size="24" />Animated icon button</Button
+          >
         </div>
 
         <Heading level="h2" id="card">Card</Heading>
@@ -319,7 +321,7 @@ const components = [
           footer="Author name"
         >
           <span slot="meta">
-            <Icon name="lucide:clock" />
+            <Icon aria-hidden="true" name="lucide:clock" />
             10 min read
           </span>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto quasi nobis optio? Qui in quo accusantium debitis
@@ -332,8 +334,8 @@ const components = [
         <DarkMode />
         <Heading level="h3">Custom icons</Heading>
         <DarkMode>
-          <Icon name="lucide:sunrise" slot="light" />
-          <Icon name="lucide:sunset" slot="dark" />
+          <Icon aria-hidden="true" name="lucide:sunrise" slot="light" />
+          <Icon aria-hidden="true" name="lucide:sunset" slot="dark" />
         </DarkMode>
 
         <Heading level="h2" id="form">Form</Heading>
@@ -405,11 +407,11 @@ const components = [
         <Heading level="h3">Icon</Heading>
         <div class="flex flex-wrap gap-2">
           <Link href="/" isButton type="default">
-            <Icon name="lucide:link" />
+            <Icon aria-hidden="true" name="lucide:link" />
             Icon button link</Link
           >
           <Link href="/" isButton animateOnHover animationType="boop" type="primary">
-            <Icon name="lucide:link" />
+            <Icon aria-hidden="true" name="lucide:link" />
             Animated icon button link</Link
           >
         </div>
@@ -439,25 +441,25 @@ const components = [
         <p>The Notification component is used to display a notification with a type and a message.</p>
         <Heading level="h3">Default</Heading>
         <Notification>
-          <Icon name="lucide:bell" /><p><strong>Message:</strong> This is a notification!</p>
+          <Icon aria-hidden="true" name="lucide:bell" /><p><strong>Message:</strong> This is a notification!</p>
         </Notification>
         <Notification role="status" type="info">
-          <Icon name="lucide:info" /><p>
+          <Icon aria-hidden="true" name="lucide:info" /><p>
             <strong>Info:</strong> This is a notification of type info.
           </p>
         </Notification>
         <Notification role="status" type="success">
-          <Icon name="lucide:circle-check" /><p>
+          <Icon aria-hidden="true" name="lucide:circle-check" /><p>
             <strong>Success:</strong> This is a notification of type success.
           </p>
         </Notification>
         <Notification role="status" type="warning">
-          <Icon name="lucide:triangle-alert" /><p>
+          <Icon aria-hidden="true" name="lucide:triangle-alert" /><p>
             <strong>Warning:</strong> This is a notification of type warning and goes on multiple lines to see how that looks.
           </p>
         </Notification>
         <Notification role="alert" type="error">
-          <Icon name="lucide:circle-x" /><p>
+          <Icon aria-hidden="true" name="lucide:circle-x" /><p>
             <strong>Error:</strong> This is a notification of type error.
           </p>
         </Notification>

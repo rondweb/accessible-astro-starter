@@ -22,7 +22,7 @@ const { icon = 'mdi:rocket', title = 'Title' }: Props = Astro.props
 ---
 
 <div class="feature flex flex-col gap-4">
-  <Icon name={icon} />
+  <Icon aria-hidden="true" name={icon} />
   <div class="content">
     <Heading level="h3" size="h6" class="mb-2">{title}</Heading>
     <p>

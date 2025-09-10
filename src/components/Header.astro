@@ -25,7 +25,7 @@ import { Icon } from 'astro-icon/components'
     <li class="menu-item has-dropdown">
       <button aria-haspopup="true" aria-expanded="false">
         Theme features
-        <Icon name="lucide:chevron-down" size="32" />
+        <Icon aria-hidden="true" name="lucide:chevron-down" size="32" />
       </button>
       <ul class="dropdown-menu">
         <li class="submenu-item">
@@ -56,14 +56,14 @@ import { Icon } from 'astro-icon/components'
     </li>
     <li class="menu-item type-icon animate-rotate">
       <Link href="https://github.com/incluud/accessible-astro-starter">
-        <Icon name="lucide:github" />
+        <Icon aria-hidden="true" name="lucide:github" />
         <span class="sr-only">Go to the GitHub page</span>
       </Link>
     </li>
     <li class="menu-item type-icon animate-rotate">
       <DarkMode>
-        <Icon name="lucide:moon" slot="light" />
-        <Icon name="lucide:sun" slot="dark" />
+        <Icon aria-hidden="true" name="lucide:moon" slot="light" />
+        <Icon aria-hidden="true" name="lucide:sun" slot="dark" />
       </DarkMode>
     </li>
   </Navigation>
