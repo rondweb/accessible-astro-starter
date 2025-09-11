@@ -57,7 +57,7 @@ const components = [
   <section class="my-12">
     <PageHeader
       title="Accessible components"
-      subtitle="This theme has a lot of extra A11Y components provided by the <a href='https://github.com/incluud/accessible-astro-components'>Accessible Astro Components</a> NPM package to help you build accessible pages faster. To learn more about the components and how to use them, checkout our <a href='https://accessible-astro.incluud.dev/'>documentation website</a>. The theme itself ships with many other components you can find in the components folder."
+      subtitle="This theme includes comprehensive accessibility components from the <a href='https://github.com/incluud/accessible-astro-components'>Accessible Astro Components</a> NPM package to accelerate accessible development. For detailed documentation and usage examples, visit our <a href='https://accessible-astro.incluud.dev/'>documentation website</a>. Additional components are available in the theme's components directory. Note: accessibility tools like aXe may report issues due to the static demonstration of the components on this page."
       bgType="bordered"
     />
   </section>
@@ -465,25 +465,25 @@ const components = [
         </Notification>
 
         <Heading level="h3">Accent</Heading>
-        <Notification variant="accent">
+        <Notification variant="accent" element="aside" role="region">
           <p><strong>Message:</strong> This is a notification!</p>
         </Notification>
-        <Notification role="status" type="info" variant="accent">
+        <Notification type="info" variant="accent" element="aside" role="region">
           <p>
             <strong>Info:</strong> This is a notification of type info.
           </p>
         </Notification>
-        <Notification role="status" type="success" variant="accent">
+        <Notification type="success" variant="accent" element="aside" role="region">
           <p>
             <strong>Success:</strong> This is a notification of type success.
           </p>
         </Notification>
-        <Notification role="status" type="warning" variant="accent">
+        <Notification type="warning" variant="accent" element="aside" role="region">
           <p>
             <strong>Warning:</strong> This is a notification of type warning and goes on multiple lines to see how that looks.
           </p>
         </Notification>
-        <Notification role="alert" type="error" variant="accent">
+        <Notification type="error" variant="accent" element="aside" role="region">
           <p>
             <strong>Error:</strong> This is a notification of type error.
           </p>
@@ -646,7 +646,7 @@ const components = [
 
     .components-navigation a {
       display: inline-block;
-      transition: translate var(--animation-speed-slow) var(--cubic-bezier);
+      transition: all var(--animation-speed-slow) var(--cubic-bezier);
     }
 
     .active {
