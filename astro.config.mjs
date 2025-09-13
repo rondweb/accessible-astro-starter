@@ -5,11 +5,13 @@ import icon from 'astro-icon'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath } from 'url'
 
+import sitemap from '@astrojs/sitemap';
+
 // https://astro.build/config
 export default defineConfig({
   compressHTML: true,
   site: 'https://accessible-astro-starter.incluud.dev',
-  integrations: [mdx(), icon(), compress()],
+  integrations: [mdx(), icon(), compress(), sitemap()],
   vite: {
     css: {
       preprocessorOptions: {

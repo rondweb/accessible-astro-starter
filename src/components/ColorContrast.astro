@@ -5,7 +5,7 @@ interface Props {
 
 const { class: className } = Astro.props
 
-import { Tabs, TabsList, TabsTab, TabsPanel } from 'accessible-astro-components'
+import { Heading, Tabs, TabsList, TabsTab, TabsPanel } from 'accessible-astro-components'
 
 interface ColorGroup {
   name: string
@@ -65,13 +65,13 @@ const themes: Theme[] = [
           <TabsPanel id={`${theme.id}-panel`} labelledby={theme.id} selected={index === 0}>
             <div class="theme-section">
               <div class="theme-header">
-                <h2>{theme.name}</h2>
+                <Heading level="h2">{theme.name}</Heading>
                 <p>{theme.description}</p>
               </div>
               <div class="color-categories">
                 {/* Three column layout for color categories */}
                 <div class="color-category">
-                  <h3>Primary Colors</h3>
+                  <Heading level="h3">Primary Colors</Heading>
                   <div class="colors">
                     {colorGroups[0].values.map((value) => (
                       <div
@@ -90,7 +90,7 @@ const themes: Theme[] = [
                 </div>
 
                 <div class="color-category">
-                  <h3>Secondary Colors</h3>
+                  <Heading level="h3">Secondary Colors</Heading>
                   <div class="colors">
                     {colorGroups[1].values.map((value) => (
                       <div
@@ -109,7 +109,7 @@ const themes: Theme[] = [
                 </div>
 
                 <div class="color-category">
-                  <h3>Neutral Colors</h3>
+                  <Heading level="h3">Neutral Colors</Heading>
                   <div class="colors">
                     {colorGroups[2].values.map((value) => (
                       <div
@@ -274,7 +274,8 @@ const themes: Theme[] = [
     margin-bottom: var(--space-m);
   }
 
-  .theme-header h2 {
+  .theme-header h2,
+  .theme-header h3 {
     margin-bottom: var(--space-xs);
   }
 

@@ -17,7 +17,7 @@ interface Post {
   userId: number
   title: string
   body: string
-  featuredImage: any // Changed to any to accommodate ImageMetadata
+  featuredImage: any
   shortUrl: string
 }
 
@@ -74,7 +74,9 @@ const { page } = Astro.props as Props
                 imageComponent={post.featuredImage}
                 url={'/blog/' + post.shortUrl}
                 title={post.title}
+                headingLevel="h2"
                 footer={'userId:' + post.userId}
+                fullHeight={true}
               >
                 {post.body}
               </Card>
@@ -96,18 +98,3 @@ const { page } = Astro.props as Props
     </div>
   </section>
 </DefaultLayout>
-
-<style lang="scss" is:global>
-  @use '../../assets/scss/base/mixins' as *;
-
-  .card {
-    h3 {
-      margin-block-end: var(--space-xs);
-      line-height: 0.75;
-    }
-
-    a {
-      @include text-decoration(transparent, var(--foreground-color), 4px, 2px);
-    }
-  }
-</style>

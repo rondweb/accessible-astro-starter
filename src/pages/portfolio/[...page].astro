@@ -34,10 +34,6 @@ interface Props {
 }
 
 const { page } = Astro.props
-
-// Prepare pagination props
-const currentPage = page.currentPage
-const totalPages = Math.ceil(page.total / page.size)
 ---
 
 <DefaultLayout
@@ -60,7 +56,9 @@ const totalPages = Math.ceil(page.total / page.size)
                 imageComponent={project.featuredImage}
                 url={'/portfolio/' + project.id}
                 title={project.data.title}
+                headingLevel="h2"
                 footer={'Author: ' + project.data.author}
+                fullHeight={true}
               >
                 {project.data.description}
               </Card>
@@ -82,18 +80,3 @@ const totalPages = Math.ceil(page.total / page.size)
     </div>
   </section>
 </DefaultLayout>
-
-<style lang="scss" is:global>
-  @use '../../assets/scss/base/mixins' as *;
-
-  .card {
-    h3 {
-      margin-block-end: var(--space-xs);
-      line-height: 0.75;
-    }
-
-    a {
-      @include text-decoration(transparent, var(--foreground-color), 4px, 2px);
-    }
-  }
-</style>
