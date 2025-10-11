@@ -5,6 +5,7 @@ import { Card, Pagination, Badge, Link } from 'accessible-astro-components'
 import { getCollection } from 'astro:content'
 import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
+import { slugify } from '@/utils/slugify'
 
 // Import images directly for optimization
 import projectImage1 from '@assets/images/projects/project-image-1.png'
@@ -16,8 +17,12 @@ import projectImage6 from '@assets/images/projects/project-image-6.png'
 
 export const getStaticPaths = (async ({ paginate }) => {
   const projects = await getCollection('projects')
-  const tags = projects.map((project) => project.data.tags).flat()
-  const uniqueTags = [...new Set(tags)].sort((a, b) => a.localeCompare(b))
+  const allTags = projects.map((project) => project.data.tags).flat()
+  const uniqueTagLabels = [...new Set(allTags)].sort((a, b) => a.localeCompare(b))
+  const uniqueTags = uniqueTagLabels.map((label) => ({
+    label,
+    slug: slugify(label),
+  }))
 
   const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
 
@@ -36,7 +41,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 
 interface Props {
   page: Page<CollectionEntry<'projects'> & { featuredImage: any }>
-  uniqueTags: string[]
+  uniqueTags: { label: string; slug: string }[]
 }
 
 const { page, uniqueTags } = Astro.props
@@ -60,9 +65,9 @@ const { page, uniqueTags } = Astro.props
         <p class="mb-2">Filter by:</p>
         <div class="flex flex-wrap gap-2">
           {
-            uniqueTags.map((tag: string) => (
-              <Link isButton size="sm" href={'/portfolio/tag/' + tag} class="mr-2">
-                {tag}
+            uniqueTags.map((tag: { label: string; slug: string }) => (
+              <Link isButton size="sm" href={'/portfolio/tag/' + tag.slug} class="mr-2">
+                {tag.label}
               </Link>
             ))
           }

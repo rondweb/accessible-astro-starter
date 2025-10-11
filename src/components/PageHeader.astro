@@ -44,9 +44,23 @@ interface Props {
    * Whether to show the breadcrumbs
    */
   showBreadcrumbs?: boolean
+  /**
+   * Custom breadcrumb labels to override the default URL-based labels
+   * @description Object mapping URL segments to their display labels
+   */
+  customBreadcrumbLabels?: Record<string, string>
 }
 
-const { class: className, title, subtitle, bgType, showBreadcrumbs = true, featuredImage, author } = Astro.props
+const {
+  class: className,
+  title,
+  subtitle,
+  bgType,
+  showBreadcrumbs = true,
+  featuredImage,
+  author,
+  customBreadcrumbLabels,
+} = Astro.props
 
 // Sanitize subtitle HTML if present
 const sanitizedSubtitle: string = subtitle
@@ -78,10 +92,14 @@ const sanitizedSubtitle: string = subtitle
               {segments.map((segment, index) => {
                 const url = `/${segments.slice(0, index + 1).join('/')}`
                 const isLast = index === segments.length - 1
-                const formattedName = segment
-                  .split('-')
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' ')
+
+                // Use custom label if provided, otherwise fallback to formatted segment
+                const formattedName =
+                  customBreadcrumbLabels?.[segment] ||
+                  segment
+                    .split('-')
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ')
 
                 return <BreadcrumbsItem href={isLast ? undefined : url} label={formattedName} currentPage={isLast} />
               })}

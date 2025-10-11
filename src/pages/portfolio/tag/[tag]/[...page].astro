@@ -5,6 +5,7 @@ import { Card, Pagination, Badge, Link } from 'accessible-astro-components'
 import { getCollection } from 'astro:content'
 import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
+import { slugify } from '@/utils/slugify'
 
 // Import images directly for optimization
 import projectImage1 from '@assets/images/projects/project-image-1.png'
@@ -17,7 +18,11 @@ import projectImage6 from '@assets/images/projects/project-image-6.png'
 export const getStaticPaths = (async ({ paginate }) => {
   const projects = await getCollection('projects')
   const allTags = projects.map((project) => project.data.tags).flat()
-  const uniqueTags = [...new Set(allTags)].sort((a, b) => a.localeCompare(b))
+  const uniqueTagLabels = [...new Set(allTags)].sort((a, b) => a.localeCompare(b))
+  const uniqueTags = uniqueTagLabels.map((label) => ({
+    label,
+    slug: slugify(label),
+  }))
 
   const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
 
@@ -32,11 +37,13 @@ export const getStaticPaths = (async ({ paginate }) => {
   const allPaginatedPages = []
 
   for (const tag of uniqueTags) {
-    const filteredProjects = projectsWithImages.filter((project) => project.data.tags.includes(tag))
+    const filteredProjects = projectsWithImages.filter((project) =>
+      project.data.tags.map((tag) => slugify(tag)).includes(tag.slug),
+    )
 
     const paginatedPages = paginate(filteredProjects, {
       pageSize: 6,
-      params: { tag },
+      params: { tag: tag.slug },
       props: {
         currentTag: tag,
         uniqueTags,
@@ -51,28 +58,33 @@ export const getStaticPaths = (async ({ paginate }) => {
 
 interface Props {
   page: Page<CollectionEntry<'projects'> & { featuredImage: any }>
-  currentTag: string
-  uniqueTags: string[]
+  currentTag: { label: string; slug: string }
+  uniqueTags: { label: string; slug: string }[]
 }
 
 const { page, currentTag, uniqueTags } = Astro.props
 ---
 
 <DefaultLayout
-  title={`Portfolio - ${currentTag}`}
-  description={`Projects filtered by ${currentTag} tag. Discover our work in ${currentTag} and related technologies.`}
+  title={`Portfolio - ${currentTag.label}`}
+  description={`Projects filtered by ${currentTag.label} tag. Discover our work in ${currentTag.label} and related technologies.`}
 >
   <PageHeader
-    title={`Portfolio: ${currentTag}`}
-    subtitle={`Showing ${page.total} project${page.total !== 1 ? 's' : ''} tagged with "${currentTag}". <a href="/portfolio">View all projects</a> or filter by other tags below.`}
+    title={`Portfolio: ${currentTag.label}`}
+    subtitle={`Showing ${page.total} project${page.total !== 1 ? 's' : ''} tagged with "${currentTag.label}". <a href="/portfolio">View all projects</a> or filter by other tags below.`}
     bgType="bordered"
+    customBreadcrumbLabels={{
+      [currentTag.slug]: currentTag.label,
+    }}
   />
   <section class="my-12">
     <div class="container">
       <!-- Project count info -->
       <p class="text-sm">
         <em
-          >Project {page.start + 1} through {page.end + 1} of {page.total} total projects tagged with "{currentTag}"</em
+          >Project {page.start + 1} through {page.end + 1} of {page.total} total projects tagged with "{
+            currentTag.label
+          }"</em
         >
       </p>
 
@@ -84,15 +96,15 @@ const { page, currentTag, uniqueTags } = Astro.props
         <p class="mb-2">Filter by other tags:</p>
         <div class="flex flex-wrap gap-2">
           {
-            uniqueTags.map((tag: string) => {
-              const isCurrentTag = tag === currentTag
+            uniqueTags.map((tag: { label: string; slug: string }) => {
+              const isCurrentTag = tag.slug === currentTag.slug
               return isCurrentTag ? (
-                <Link isButton size="sm" href={'/portfolio/tag/' + tag} disabled class="disabled mr-2">
-                  {tag}
+                <Link isButton size="sm" href={'/portfolio/tag/' + tag.slug} disabled class="disabled mr-2">
+                  {tag.label}
                 </Link>
               ) : (
-                <Link isButton size="sm" href={'/portfolio/tag/' + tag} class="mr-2">
-                  {tag}
+                <Link isButton size="sm" href={'/portfolio/tag/' + tag.slug} class="mr-2">
+                  {tag.label}
                 </Link>
               )
             })
@@ -116,7 +128,7 @@ const { page, currentTag, uniqueTags } = Astro.props
               >
                 <span slot="meta">
                   {project.data.tags.map((tag) => {
-                    const isCurrentTag = tag === currentTag
+                    const isCurrentTag = tag === currentTag.label
                     return isCurrentTag ? <Badge class="bg-blue-600 text-white">{tag}</Badge> : <Badge>{tag}</Badge>
                   })}
                 </span>
