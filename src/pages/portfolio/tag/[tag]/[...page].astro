@@ -1,0 +1,148 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import PageHeader from '@components/PageHeader.astro'
+import { Card, Pagination, Badge, Link } from 'accessible-astro-components'
+import { getCollection } from 'astro:content'
+import type { GetStaticPaths, Page } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+
+// Import images directly for optimization
+import projectImage1 from '@assets/images/projects/project-image-1.png'
+import projectImage2 from '@assets/images/projects/project-image-2.png'
+import projectImage3 from '@assets/images/projects/project-image-3.png'
+import projectImage4 from '@assets/images/projects/project-image-4.png'
+import projectImage5 from '@assets/images/projects/project-image-5.png'
+import projectImage6 from '@assets/images/projects/project-image-6.png'
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const projects = await getCollection('projects')
+  const allTags = projects.map((project) => project.data.tags).flat()
+  const uniqueTags = [...new Set(allTags)]
+
+  const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
+
+  const projectsWithImages = projects.map((project, index) => {
+    return {
+      ...project,
+      featuredImage: projectImages[index % projectImages.length],
+    }
+  })
+
+  // Generate paginated pages for each tag
+  const allPaginatedPages = []
+
+  for (const tag of uniqueTags) {
+    const filteredProjects = projectsWithImages.filter((project) => project.data.tags.includes(tag))
+
+    const paginatedPages = paginate(filteredProjects, {
+      pageSize: 6,
+      params: { tag },
+      props: {
+        currentTag: tag,
+        uniqueTags,
+      },
+    })
+
+    allPaginatedPages.push(...paginatedPages)
+  }
+
+  return allPaginatedPages
+}) satisfies GetStaticPaths
+
+interface Props {
+  page: Page<CollectionEntry<'projects'> & { featuredImage: any }>
+  currentTag: string
+  uniqueTags: string[]
+}
+
+const { page, currentTag, uniqueTags } = Astro.props
+---
+
+<DefaultLayout
+  title={`Portfolio - ${currentTag}`}
+  description={`Projects filtered by ${currentTag} tag. Discover our work in ${currentTag} and related technologies.`}
+>
+  <PageHeader
+    title={`Portfolio: ${currentTag}`}
+    subtitle={`Showing ${page.total} project${page.total !== 1 ? 's' : ''} tagged with "${currentTag}". <a href="/portfolio">View all projects</a> or filter by other tags below.`}
+    bgType="bordered"
+  />
+  <section class="my-12">
+    <div class="container">
+      <!-- Project count info -->
+      <p class="text-sm">
+        <em
+          >Project {page.start + 1} through {page.end + 1} of {page.total} total projects tagged with "{currentTag}"</em
+        >
+      </p>
+
+      <!-- Tag filtering section -->
+      <div class="mt-4 mb-6">
+        <p class="mb-4 text-sm">
+          <Link href="/portfolio">← All projects</Link>
+        </p>
+        <p class="mb-2">Filter by other tags:</p>
+        <div class="flex flex-wrap gap-2">
+          {
+            uniqueTags.map((tag: string) => {
+              const isCurrentTag = tag === currentTag
+              return isCurrentTag ? (
+                <Link isButton size="sm" href={'/portfolio/tag/' + tag} disabled class="disabled mr-2">
+                  {tag}
+                </Link>
+              ) : (
+                <Link isButton size="sm" href={'/portfolio/tag/' + tag} class="mr-2">
+                  {tag}
+                </Link>
+              )
+            })
+          }
+          <Link isButton size="sm" href="/portfolio" class="ml-2">All Projects</Link>
+        </div>
+      </div>
+
+      <!-- Projects grid -->
+      <ul class="my-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          page.data.map((project) => (
+            <li>
+              <Card
+                imageComponent={project.featuredImage}
+                url={'/portfolio/' + project.id}
+                title={project.data.title}
+                headingLevel="h2"
+                footer={'Author: ' + project.data.author}
+                fullHeight={true}
+              >
+                <span slot="meta">
+                  {project.data.tags.map((tag) => {
+                    const isCurrentTag = tag === currentTag
+                    return isCurrentTag ? <Badge class="bg-blue-600 text-white">{tag}</Badge> : <Badge>{tag}</Badge>
+                  })}
+                </span>
+                {project.data.description}
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Pagination -->
+      {
+        page && Math.ceil(page.total / 6) > 1 && (
+          <div class="mt-12 grid place-content-center">
+            <Pagination
+              firstPage={page.url.prev ? `/portfolio/tag/${currentTag}` : null}
+              previousPage={page.url.prev ? page.url.prev : null}
+              nextPage={page.url.next ? page.url.next : null}
+              lastPage={page.url.next ? `/portfolio/tag/${currentTag}/${Math.ceil(page.total / 6)}` : null}
+              currentPage={`${page.currentPage}`}
+              totalPages={`${Math.ceil(page.total / 6)}`}
+              ariaLabel={`${currentTag} portfolio pagination`}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+</DefaultLayout>

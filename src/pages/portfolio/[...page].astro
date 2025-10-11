@@ -1,7 +1,7 @@
 ---
 import DefaultLayout from '@layouts/DefaultLayout.astro'
 import PageHeader from '@components/PageHeader.astro'
-import { Card, Pagination } from 'accessible-astro-components'
+import { Card, Pagination, Badge, Link } from 'accessible-astro-components'
 import { getCollection } from 'astro:content'
 import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
@@ -16,6 +16,8 @@ import projectImage6 from '@assets/images/projects/project-image-6.png'
 
 export const getStaticPaths = (async ({ paginate }) => {
   const projects = await getCollection('projects')
+  const tags = projects.map((project) => project.data.tags).flat()
+  const uniqueTags = [...new Set(tags)]
 
   const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
 
@@ -26,14 +28,18 @@ export const getStaticPaths = (async ({ paginate }) => {
     }
   })
 
-  return paginate(projectsWithImages, { pageSize: 6 })
+  return paginate(projectsWithImages, {
+    pageSize: 6,
+    props: { uniqueTags },
+  })
 }) satisfies GetStaticPaths
 
 interface Props {
   page: Page<CollectionEntry<'projects'> & { featuredImage: any }>
+  uniqueTags: string[]
 }
 
-const { page } = Astro.props
+const { page, uniqueTags } = Astro.props
 ---
 
 <DefaultLayout
@@ -48,6 +54,21 @@ const { page } = Astro.props
   <section class="my-12">
     <div class="container">
       <p class="text-sm"><em>Project {page.start + 1} through {page.end + 1} of {page.total} total projects</em></p>
+
+      <!-- Tag filtering section -->
+      <div class="mt-4 mb-6">
+        <p class="mb-2">Filter by:</p>
+        <div class="flex flex-wrap gap-2">
+          {
+            uniqueTags.map((tag: string) => (
+              <Link isButton size="sm" href={'/portfolio/tag/' + tag} class="mr-2">
+                {tag}
+              </Link>
+            ))
+          }
+        </div>
+      </div>
+
       <ul class="my-3 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {
           page.data.map((project) => (
@@ -60,6 +81,11 @@ const { page } = Astro.props
                 footer={'Author: ' + project.data.author}
                 fullHeight={true}
               >
+                <span slot="meta">
+                  {project.data.tags.map((tag) => (
+                    <Badge>{tag}</Badge>
+                  ))}
+                </span>
                 {project.data.description}
               </Card>
             </li>
