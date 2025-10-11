@@ -17,7 +17,7 @@ import projectImage6 from '@assets/images/projects/project-image-6.png'
 export const getStaticPaths = (async ({ paginate }) => {
   const projects = await getCollection('projects')
   const tags = projects.map((project) => project.data.tags).flat()
-  const uniqueTags = [...new Set(tags)]
+  const uniqueTags = [...new Set(tags)].sort((a, b) => a.localeCompare(b))
 
   const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
 
