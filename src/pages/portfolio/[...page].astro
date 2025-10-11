@@ -1,7 +1,7 @@
 ---
 import DefaultLayout from '@layouts/DefaultLayout.astro'
 import PageHeader from '@components/PageHeader.astro'
-import { Card, Pagination, Badge, Link } from 'accessible-astro-components'
+import { Badge, Card, Heading, Link, Pagination } from 'accessible-astro-components'
 import { getCollection } from 'astro:content'
 import type { GetStaticPaths, Page } from 'astro'
 import type { CollectionEntry } from 'astro:content'
@@ -58,60 +58,61 @@ const { page, uniqueTags } = Astro.props
   />
   <section class="my-12">
     <div class="container">
-      <p class="text-sm"><em>Project {page.start + 1} through {page.end + 1} of {page.total} total projects</em></p>
-
-      <!-- Tag filtering section -->
-      <div class="mt-4 mb-6">
-        <p class="mb-2">Filter by:</p>
-        <div class="flex flex-wrap gap-2">
-          {
-            uniqueTags.map((tag: { label: string; slug: string }) => (
-              <Link isButton size="sm" href={'/portfolio/tag/' + tag.slug} class="mr-2">
-                {tag.label}
-              </Link>
-            ))
-          }
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-[300px_1fr]">
+        <div class="mb-6">
+          <Heading level="h2" size="h5" class="mb-2">Tags</Heading>
+          <div class="flex flex-wrap gap-4">
+            {
+              uniqueTags.map((tag: { label: string; slug: string }) => (
+                <Link isButton size="sm" href={'/portfolio/tag/' + tag.slug} class="mr-2">
+                  {tag.label}
+                </Link>
+              ))
+            }
+          </div>
+        </div>
+        <div class="mb-6">
+          <p class="text-sm"><em>Project {page.start + 1} through {page.end + 1} of {page.total} total projects</em></p>
+          <ul class="mt-3 grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {
+              page.data.map((project) => (
+                <li>
+                  <Card
+                    imageComponent={project.featuredImage}
+                    url={'/portfolio/' + project.id}
+                    title={project.data.title}
+                    headingLevel="h2"
+                    footer={'Author: ' + project.data.author}
+                    fullHeight={true}
+                  >
+                    <span slot="meta">
+                      {project.data.tags.map((tag) => (
+                        <Badge>{tag}</Badge>
+                      ))}
+                    </span>
+                    {project.data.description}
+                  </Card>
+                </li>
+              ))
+            }
+          </ul>
         </div>
       </div>
-
-      <ul class="my-3 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {
-          page.data.map((project) => (
-            <li>
-              <Card
-                imageComponent={project.featuredImage}
-                url={'/portfolio/' + project.id}
-                title={project.data.title}
-                headingLevel="h2"
-                footer={'Author: ' + project.data.author}
-                fullHeight={true}
-              >
-                <span slot="meta">
-                  {project.data.tags.map((tag) => (
-                    <Badge>{tag}</Badge>
-                  ))}
-                </span>
-                {project.data.description}
-              </Card>
-            </li>
-          ))
-        }
-      </ul>
-      {
-        page && page.lastPage > 1 && (
-          <div class="mt-12 grid place-content-center">
-            <Pagination
-              firstPage={page.url.prev ? '/portfolio' : null}
-              previousPage={page.url.prev ? page.url.prev : null}
-              nextPage={page.url.next ? page.url.next : null}
-              lastPage={page.url.next ? `/portfolio/${page.lastPage}` : null}
-              currentPage={`${page.currentPage}`}
-              totalPages={`${page.lastPage}`}
-              ariaLabel="Portfolio pagination"
-            />
-          </div>
-        )
-      }
     </div>
+    {
+      page && page.lastPage > 1 && (
+        <div class="mt-12 grid place-content-center">
+          <Pagination
+            firstPage={page.url.prev ? '/portfolio' : null}
+            previousPage={page.url.prev ? page.url.prev : null}
+            nextPage={page.url.next ? page.url.next : null}
+            lastPage={page.url.next ? `/portfolio/${page.lastPage}` : null}
+            currentPage={`${page.currentPage}`}
+            totalPages={`${page.lastPage}`}
+            ariaLabel="Portfolio pagination"
+          />
+        </div>
+      )
+    }
   </section>
 </DefaultLayout>
