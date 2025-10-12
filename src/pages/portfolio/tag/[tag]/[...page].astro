@@ -76,6 +76,7 @@ const { page, currentTag, uniqueTags } = Astro.props
     customBreadcrumbLabels={{
       [currentTag.slug]: currentTag.label,
     }}
+    joinLastBreadcrumb={true}
   />
   <section class="my-12">
     <div class="container">
