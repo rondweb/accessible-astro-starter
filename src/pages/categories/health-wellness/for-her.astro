@@ -1,0 +1,177 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import PageHeader from '@components/PageHeader.astro'
+import { Badge, Card, Link } from 'accessible-astro-components'
+import { getCollection } from 'astro:content'
+import { Icon } from 'astro-icon/components'
+
+// Função para criar slug amigável para URL a partir do título do produto
+function createProductSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+    .trim()
+    .replace(/\s+/g, '-') // Substitui espaços por hífens
+    .replace(/-+/g, '-') // Remove hífens múltiplos
+    .replace(/^-|-$/g, '') // Remove hífens do início e fim
+}
+
+// Get all health & wellness products for her
+const allProducts = await getCollection('products')
+const healthProducts = allProducts.filter(product =>
+  product.data.category === 'health-wellness-for-her'
+)
+
+// Import project images for fallback
+import projectImage1 from '@assets/images/projects/project-image-1.png'
+import projectImage2 from '@assets/images/projects/project-image-2.png'
+import projectImage3 from '@assets/images/projects/project-image-3.png'
+import projectImage4 from '@assets/images/projects/project-image-4.png'
+import projectImage5 from '@assets/images/projects/project-image-5.png'
+import projectImage6 from '@assets/images/projects/project-image-6.png'
+
+const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
+
+const productsWithImages = healthProducts.map((product, index) => ({
+  ...product,
+  featuredImage: product.data.image ? product.data.image : projectImages[index % projectImages.length],
+}))
+---
+
+<DefaultLayout
+  title="Health & Wellness for Her"
+  description="Women's health and wellness products including supplements, digestive health, and wellness essentials"
+>
+  <PageHeader
+    title="Health & Wellness for Her"
+    subtitle="Premium health and wellness products designed specifically for women's unique nutritional needs and wellness goals"
+    bgType="bordered"
+  />
+
+  <section class="my-12">
+    <div class="container">
+      <!-- Category Features -->
+      <div class="mb-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div class="text-center p-6 bg-pink-50 dark:bg-pink-900/20 rounded-lg border border-pink-200 dark:border-pink-800">
+          <Icon name="lucide:flower" size="3rem" class="mx-auto mb-4 text-pink-600" />
+          <h3 class="text-xl font-semibold mb-2">Hormonal Balance</h3>
+          <p class="text-sm text-muted">Natural support for hormonal health and menstrual cycle regulation</p>
+        </div>
+
+        <div class="text-center p-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+          <Icon name="lucide:bacteria" size="3rem" class="mx-auto mb-4 text-purple-600" />
+          <h3 class="text-xl font-semibold mb-2">Digestive Wellness</h3>
+          <p class="text-sm text-muted">Probiotics and digestive enzymes for optimal gut health and comfort</p>
+        </div>
+
+        <div class="text-center p-6 bg-rose-50 dark:bg-rose-900/20 rounded-lg border border-rose-200 dark:border-rose-800">
+          <Icon name="lucide:shield-check" size="3rem" class="mx-auto mb-4 text-rose-600" />
+          <h3 class="text-xl font-semibold mb-2">Immune Support</h3>
+          <p class="text-sm text-muted">Enhanced immune function with targeted vitamins and minerals</p>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-6">Featured Products for Women</h2>
+        <p class="text-muted mb-8">
+          {healthProducts.length} product{healthProducts.length !== 1 ? 's' : ''} designed to support women's health and wellness goals
+        </p>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {productsWithImages.map((product) => (
+            <Card
+              imageComponent={product.featuredImage}
+              url={`/category/${product.data.category}/product/${createProductSlug(product.data.title)}`}
+              title={product.data.title}
+              headingLevel="h3"
+              footer={`Price: ${product.data.price}`}
+              fullHeight={true}
+            >
+              <span slot="meta">
+                {product.data.tags?.map((tag: string) => (
+                  <Badge>{tag}</Badge>
+                ))}
+              </span>
+              {product.data.description}
+              <div class="mt-4">
+                <Link
+                  href={product.data.affiliateUrl}
+                  isExternal
+                  isButton
+                  type="primary"
+                  class="w-full text-center"
+                  animateOnHover
+                  animationType="boop"
+                >
+                  Buy Now (Affiliate Link)
+                </Link>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <!-- Women's Health Tips -->
+      <div class="mt-16 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 rounded-lg p-8 border border-pink-200 dark:border-pink-800">
+        <h2 class="text-2xl font-bold mb-6 text-center">Women's Health Tips</h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-pink-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Bone Health</h4>
+                <p class="text-sm text-muted">Ensure adequate calcium and vitamin D intake, especially important for postmenopausal women.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-pink-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Breast Health</h4>
+                <p class="text-sm text-muted">Regular self-exams and mammograms as recommended by your healthcare provider.</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-pink-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Hormonal Balance</h4>
+                <p class="text-sm text-muted">Track your menstrual cycle and discuss any irregularities with your healthcare provider.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-pink-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Mental Wellness</h4>
+                <p class="text-sm text-muted">Prioritize self-care and stress management - your mental health matters too.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Category -->
+      <div class="mt-12 text-center">
+        <Link href="/categories/health-wellness" isButton type="outline">
+          <Icon name="lucide:arrow-left" size="1rem" />
+          Back to Health & Wellness
+        </Link>
+      </div>
+    </div>
+  </section>
+</DefaultLayout>
+
+<style>
+  .category-card {
+    background: var(--color-background);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+</style>

@@ -1,0 +1,138 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import PageHeader from '@components/PageHeader.astro'
+import { Badge, Card, Link, Pagination } from 'accessible-astro-components'
+import { getCollection } from 'astro:content'
+import type { GetStaticPaths, Page } from 'astro'
+import type { CollectionEntry } from 'astro:content'
+
+// Import images directly for optimization
+import projectImage1 from '@assets/images/projects/project-image-1.png'
+import projectImage2 from '@assets/images/projects/project-image-2.png'
+import projectImage3 from '@assets/images/projects/project-image-3.png'
+import projectImage4 from '@assets/images/projects/project-image-4.png'
+import projectImage5 from '@assets/images/projects/project-image-5.png'
+import projectImage6 from '@assets/images/projects/project-image-6.png'
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const products = await getCollection('products')
+
+  // Group products by category
+  const productsByCategory = products.reduce((acc, product) => {
+    const category = product.data.category
+    if (!acc[category]) {
+      acc[category] = []
+    }
+    acc[category].push(product)
+    return acc
+  }, {} as Record<string, CollectionEntry<'products'>[]>)
+
+  const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
+
+  // Create paginated paths for each category
+  const allPaths: any[] = []
+
+  Object.entries(productsByCategory).forEach(([categorySlug, categoryProducts]) => {
+    const productsWithImages = categoryProducts.map((product, index) => ({
+      ...product,
+      featuredImage: product.data.image ? product.data.image : projectImages[index % projectImages.length],
+    }))
+
+    const categoryPaths = paginate(productsWithImages, {
+      pageSize: 6,
+      params: { category: categorySlug },
+      props: {
+        category: {
+          title: categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1),
+          description: `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1)} products and accessories`,
+          slug: categorySlug
+        }
+      }
+    })
+
+    allPaths.push(...categoryPaths)
+  })
+
+  return allPaths
+}) satisfies GetStaticPaths
+
+interface Props {
+  page: Page<CollectionEntry<'products'> & { featuredImage: any }>
+  category: {
+    title: string
+    description: string
+    slug: string
+  }
+}
+
+const { page, category } = Astro.props
+---
+
+<DefaultLayout
+  title={`${category.title} - Product Category`}
+  description={category.description}
+>
+  <PageHeader
+    title={category.title}
+    subtitle={category.description}
+    bgType="bordered"
+  />
+  <section class="my-12">
+    <div class="container">
+      <p class="mt-8 text-sm">
+        <em>Product {page.start + 1} through {page.end + 1} of {page.total} total products</em>
+      </p>
+      <ul class="mt-3 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {
+          page.data.map((product) => (
+            <li>
+              <Card
+                imageComponent={product.featuredImage}
+                url={`/product/${product.id}`}
+                title={product.data.title}
+                headingLevel="h2"
+                footer={`Price: ${product.data.price}`}
+                fullHeight={true}
+              >
+                <span slot="meta">
+                  {product.data.tags.map((tag: string) => (
+                    <Badge>{tag}</Badge>
+                  ))}
+                </span>
+                {product.data.description}
+                <div class="mt-4">
+                  <Link
+                    href={product.data.affiliateUrl}
+                    isExternal
+                    isButton
+                    type="primary"
+                    class="w-full text-center"
+                    animateOnHover
+                    animationType="boop"
+                  >
+                    Buy Now (Affiliate Link)
+                  </Link>
+                </div>
+              </Card>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        page && page.lastPage > 1 && (
+          <div class="mt-12 grid place-content-center">
+            <Pagination
+              firstPage={page.url.prev ? `/categories/${category.slug}` : null}
+              previousPage={page.url.prev ? page.url.prev : null}
+              nextPage={page.url.next ? page.url.next : null}
+              lastPage={page.url.next ? `/categories/${category.slug}/${page.lastPage}` : null}
+              currentPage={`${page.currentPage}`}
+              totalPages={`${page.lastPage}`}
+              ariaLabel={`${category.title} category pagination`}
+            />
+          </div>
+        )
+      }
+    </div>
+  </section>
+</DefaultLayout>

@@ -1,0 +1,89 @@
+---
+// Product Gallery Component
+// Displays a grid of products with their organized images
+
+import { getCollection } from 'astro:content'
+import ProductImages, { getProductSlug } from '@components/ProductImages.astro'
+import { Badge, Card, Link } from 'accessible-astro-components'
+
+const products = await getCollection('products')
+
+// Take only first 6 products for the gallery
+const featuredProducts = products.slice(0, 6)
+---
+
+<section class="product-gallery my-12">
+  <div class="container">
+    <h2 class="text-3xl font-bold text-center mb-8">Featured Products</h2>
+    <p class="text-center text-muted mb-12 max-w-2xl mx-auto">
+      Discover our curated selection of top-quality products across all categories
+    </p>
+
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {featuredProducts.map((product) => {
+        // Extract product slug from the ID using helper function
+        const productSlug = getProductSlug(product.id)
+
+        return (
+          <Card
+            imageComponent={
+              <ProductImages
+                productSlug={productSlug}
+                alt={product.data.title}
+                class="w-full h-48 object-cover rounded-t-lg"
+              />
+            }
+            url={`/product/${product.id}`}
+            title={product.data.title}
+            headingLevel="h3"
+            footer={`Price: ${product.data.price}`}
+            fullHeight={true}
+          >
+            <span slot="meta">
+              <Badge variant="primary">{product.data.category}</Badge>
+              {product.data.tags.slice(0, 2).map((tag: string) => (
+                <Badge variant="secondary">{tag}</Badge>
+              ))}
+            </span>
+
+            <p class="text-sm text-muted mb-4">
+              {product.data.description}
+            </p>
+
+            <div class="mt-4">
+              <Link
+                href={product.data.affiliateUrl}
+                isExternal
+                isButton
+                type="outline"
+                size="sm"
+                class="w-full"
+              >
+                View Details
+              </Link>
+            </div>
+          </Card>
+        )
+      })}
+    </div>
+
+    <div class="text-center mt-12">
+      <Link href="/categories" isButton type="primary" size="lg">
+        View All Categories
+      </Link>
+    </div>
+  </div>
+</section>
+
+<style>
+  .product-gallery {
+    .product-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+</style>

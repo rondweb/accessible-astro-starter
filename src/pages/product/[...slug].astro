@@ -1,0 +1,141 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import PageHeader from '@components/PageHeader.astro'
+import ProductImages, { getProductSlug } from '@components/ProductImages.astro'
+import { Badge, Link } from 'accessible-astro-components'
+import { getCollection, render } from 'astro:content'
+import type { GetStaticPaths } from 'astro'
+
+export const getStaticPaths = (async () => {
+  const products = await getCollection('products')
+
+  return products.map((product) => ({
+    params: {
+      category: product.data.category,
+      product: product.id
+    },
+    props: { product },
+  }))
+}) satisfies GetStaticPaths
+
+interface Props {
+  product: any
+}
+
+const { product } = Astro.props
+const { Content } = await render(product)
+---
+
+<DefaultLayout
+  title={`${product.data.title} - Product Review`}
+  description={product.data.description}
+>
+  <PageHeader
+    title={product.data.title}
+    subtitle={`Product Review - ${product.data.category}`}
+    bgType="bordered"
+  />
+
+  <section class="my-12">
+    <div class="container">
+      <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 gap-12 lg:grid-cols-3">
+          <!-- Product Info Sidebar -->
+          <div class="lg:col-span-1 lg:order-first">
+            <div class="sticky top-8 space-y-6 lg:max-w-sm">
+              <!-- Price Card -->
+              <div class="bg-primary-50 dark:bg-primary-900/20 p-6 rounded-lg border border-primary-200 dark:border-primary-800">
+                <h3 class="text-2xl font-bold text-primary-900 dark:text-primary-100 mb-4">
+                  {product.data.price}
+                </h3>
+                <Link
+                  href={product.data.affiliateUrl}
+                  isExternal
+                  isButton
+                  type="primary"
+                  class="w-full text-center"
+                  animateOnHover
+                  animationType="boop"
+                >
+                  Buy Now (Affiliate Link)
+                </Link>
+              </div>
+
+              <!-- Tags -->
+              <div class="bg-secondary-50 dark:bg-secondary-900/20 p-6 rounded-lg border border-secondary-200 dark:border-secondary-800">
+                <h4 class="text-lg font-semibold mb-4 text-secondary-900 dark:text-secondary-100">
+                  Tags
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                  {product.data.tags.map((tag: string) => (
+                    <Badge variant="secondary">{tag}</Badge>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Category -->
+              <div class="bg-accent-50 dark:bg-accent-900/20 p-6 rounded-lg border border-accent-200 dark:border-accent-800">
+                <h4 class="text-lg font-semibold mb-4 text-accent-900 dark:text-accent-100">
+                  Category
+                </h4>
+                <Link href={`/categories/${product.data.category}`} class="text-accent-600 dark:text-accent-400 hover:underline">
+                  {product.data.category.charAt(0).toUpperCase() + product.data.category.slice(1)}
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Content -->
+          <div class="lg:col-span-2 lg:pl-4">
+            <!-- Product Image -->
+            <div class="mb-12">
+              <ProductImages
+                productSlug={getProductSlug(product.id)}
+                productImage={product.data.image}
+                alt={product.data.title}
+                class="w-full max-w-lg mx-auto"
+                showCarousel={true}
+                autoplay={true}
+                autoplayDelay={4000}
+              />
+            </div>
+
+            <!-- Product Description -->
+            <article class="prose prose-lg dark:prose-invert max-w-none leading-relaxed">
+              <div class="space-y-8">
+                <Content />
+
+                <!-- Additional Product Features Section -->
+                <div class="mt-12 p-6 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                  <h3 class="text-xl font-bold text-primary-900 dark:text-primary-100 mb-4">
+                    📋 Detalhes do Produto
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span class="font-semibold text-primary-700 dark:text-primary-300">Categoria:</span>
+                      <span class="ml-2 text-primary-600 dark:text-primary-400">{product.data.category.charAt(0).toUpperCase() + product.data.category.slice(1)}</span>
+                    </div>
+                    <div>
+                      <span class="font-semibold text-primary-700 dark:text-primary-300">Preço:</span>
+                      <span class="ml-2 text-primary-600 dark:text-primary-400">{product.data.price}</span>
+                    </div>
+                    <div class="md:col-span-2">
+                      <span class="font-semibold text-primary-700 dark:text-primary-300">Tags:</span>
+                      <div class="mt-2 flex flex-wrap gap-2">
+                        {product.data.tags.map((tag: string) => (
+                          <span class="px-2 py-1 bg-primary-100 dark:bg-primary-800 text-primary-800 dark:text-primary-200 text-xs rounded-full">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</DefaultLayout>

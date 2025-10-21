@@ -1,0 +1,158 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import PageHeader from '@components/PageHeader.astro'
+import { Badge, Card, Link } from 'accessible-astro-components'
+import { getCollection } from 'astro:content'
+import { Icon } from 'astro-icon/components'
+
+// Get all health & wellness products
+const allProducts = await getCollection('products')
+const healthProducts = allProducts.filter(product => product.data.category === 'health-wellness')
+
+// Import project images for fallback
+import projectImage1 from '@assets/images/projects/project-image-1.png'
+import projectImage2 from '@assets/images/projects/project-image-2.png'
+import projectImage3 from '@assets/images/projects/project-image-3.png'
+import projectImage4 from '@assets/images/projects/project-image-4.png'
+import projectImage5 from '@assets/images/projects/project-image-5.png'
+import projectImage6 from '@assets/images/projects/project-image-6.png'
+
+const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
+
+const productsWithImages = healthProducts.map((product, index) => ({
+  ...product,
+  featuredImage: product.data.image ? product.data.image : projectImages[index % projectImages.length],
+}))
+---
+
+<DefaultLayout
+  title="Health & Wellness"
+  description="Premium health and wellness products including supplements, vitamins, and fitness nutrition for optimal wellbeing"
+>
+  <PageHeader
+    title="Health & Wellness"
+    subtitle="Discover our comprehensive selection of health and wellness products designed to support your journey to optimal wellbeing"
+    bgType="bordered"
+  />
+
+  <section class="my-12">
+    <div class="container">
+      <!-- Specialized Sections -->
+      <div class="mb-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div class="relative overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-8 border border-blue-200 dark:border-blue-800">
+          <div class="relative z-10">
+            <Icon name="lucide:shield" size="3rem" class="mb-4 text-blue-600" />
+            <h3 class="text-2xl font-bold mb-4">For Him</h3>
+            <p class="text-muted mb-6">
+              Specialized health products designed for men's unique nutritional needs, including prostate support, energy optimization, and muscle recovery.
+            </p>
+            <Link href="/categories/health-wellness/for-him" isButton type="primary" class="w-full">
+              Explore Men's Health
+            </Link>
+          </div>
+          <div class="absolute top-0 right-0 opacity-10">
+            <Icon name="lucide:activity" size="8rem" />
+          </div>
+        </div>
+
+        <div class="relative overflow-hidden rounded-lg bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 p-8 border border-pink-200 dark:border-pink-800">
+          <div class="relative z-10">
+            <Icon name="lucide:flower" size="3rem" class="mb-4 text-pink-600" />
+            <h3 class="text-2xl font-bold mb-4">For Her</h3>
+            <p class="text-muted mb-6">
+              Tailored wellness solutions for women's health including hormonal balance, digestive wellness, and immune support products.
+            </p>
+            <Link href="/categories/health-wellness/for-her" isButton type="primary" class="w-full">
+              Explore Women's Health
+            </Link>
+          </div>
+          <div class="absolute top-0 right-0 opacity-10">
+            <Icon name="lucide:heart" size="8rem" />
+          </div>
+        </div>
+      </div>
+
+      <!-- All Products -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-6">All Health & Wellness Products</h2>
+        <p class="text-muted mb-8">
+          {healthProducts.length} product{healthProducts.length !== 1 ? 's' : ''} to support your health and wellness journey
+        </p>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {productsWithImages.map((product) => (
+            <Card
+              imageComponent={product.featuredImage}
+              url={`/product/${product.id}`}
+              title={product.data.title}
+              headingLevel="h3"
+              footer={`Price: ${product.data.price}`}
+              fullHeight={true}
+            >
+              <span slot="meta">
+                {product.data.tags?.map((tag: string) => (
+                  <Badge>{tag}</Badge>
+                ))}
+              </span>
+              {product.data.description}
+              <div class="mt-4">
+                <Link
+                  href={product.data.affiliateUrl}
+                  isExternal
+                  isButton
+                  type="primary"
+                  class="w-full text-center"
+                  animateOnHover
+                  animationType="boop"
+                >
+                  Buy Now (Affiliate Link)
+                </Link>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <!-- Health Categories -->
+      <div class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div class="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+          <Icon name="lucide:leaf" size="3rem" class="mx-auto mb-4 text-green-600" />
+          <h3 class="text-xl font-semibold mb-2">Natural Supplements</h3>
+          <p class="text-sm text-muted">Organic and plant-based supplements for daily wellness support</p>
+        </div>
+
+        <div class="text-center p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <Icon name="lucide:zap" size="3rem" class="mx-auto mb-4 text-blue-600" />
+          <h3 class="text-xl font-semibold mb-2">Energy & Performance</h3>
+          <p class="text-sm text-muted">Products designed to enhance energy levels and physical performance</p>
+        </div>
+
+        <div class="text-center p-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+          <Icon name="lucide:shield" size="3rem" class="mx-auto mb-4 text-purple-600" />
+          <h3 class="text-xl font-semibold mb-2">Immune Support</h3>
+          <p class="text-sm text-muted">Strengthen your immune system with targeted nutritional support</p>
+        </div>
+      </div>
+
+      <!-- Back to Categories -->
+      <div class="mt-12 text-center">
+        <Link href="/categories" isButton type="outline">
+          <Icon name="lucide:arrow-left" size="1rem" />
+          Back to All Categories
+        </Link>
+      </div>
+    </div>
+  </section>
+</DefaultLayout>
+
+<style>
+  .category-card {
+    background: var(--color-background);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+</style>

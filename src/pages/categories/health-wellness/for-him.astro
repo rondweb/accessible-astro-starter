@@ -1,0 +1,178 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import PageHeader from '@components/PageHeader.astro'
+import { Badge, Card, Link } from 'accessible-astro-components'
+import { getCollection } from 'astro:content'
+import { Icon } from 'astro-icon/components'
+
+// Função para criar slug amigável para URL a partir do título do produto
+function createProductSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+    .trim()
+    .replace(/\s+/g, '-') // Substitui espaços por hífens
+    .replace(/-+/g, '-') // Remove hífens múltiplos
+    .replace(/^-|-$/g, '') // Remove hífens do início e fim
+}
+
+// Get all health & wellness products
+const allProducts = await getCollection('products')
+const healthProducts = allProducts.filter(product =>
+  product.data.category === 'health-wellness' &&
+  (product.data.tags?.includes("men's-health") || product.data.tags?.includes("fitness") || product.data.tags?.includes("protein"))
+)
+
+// Import project images for fallback
+import projectImage1 from '@assets/images/projects/project-image-1.png'
+import projectImage2 from '@assets/images/projects/project-image-2.png'
+import projectImage3 from '@assets/images/projects/project-image-3.png'
+import projectImage4 from '@assets/images/projects/project-image-4.png'
+import projectImage5 from '@assets/images/projects/project-image-5.png'
+import projectImage6 from '@assets/images/projects/project-image-6.png'
+
+const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
+
+const productsWithImages = healthProducts.map((product, index) => ({
+  ...product,
+  featuredImage: product.data.image ? product.data.image : projectImages[index % projectImages.length],
+}))
+---
+
+<DefaultLayout
+  title="Health & Wellness for Him"
+  description="Men's health and wellness products including supplements, fitness nutrition, and wellness essentials"
+>
+  <PageHeader
+    title="Health & Wellness for Him"
+    subtitle="Premium health and wellness products designed specifically for men's unique nutritional needs and fitness goals"
+    bgType="bordered"
+  />
+
+  <section class="my-12">
+    <div class="container">
+      <!-- Category Features -->
+      <div class="mb-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div class="text-center p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <Icon name="lucide:shield" size="3rem" class="mx-auto mb-4 text-blue-600" />
+          <h3 class="text-xl font-semibold mb-2">Prostate Support</h3>
+          <p class="text-sm text-muted">Targeted nutrients for men's prostate health and urinary function</p>
+        </div>
+
+        <div class="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+          <Icon name="lucide:zap" size="3rem" class="mx-auto mb-4 text-green-600" />
+          <h3 class="text-xl font-semibold mb-2">Energy & Performance</h3>
+          <p class="text-sm text-muted">Natural energy support and performance enhancement for active lifestyles</p>
+        </div>
+
+        <div class="text-center p-6 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+          <Icon name="lucide:activity" size="3rem" class="mx-auto mb-4 text-orange-600" />
+          <h3 class="text-xl font-semibold mb-2">Muscle Recovery</h3>
+          <p class="text-sm text-muted">Protein and amino acids for optimal muscle building and recovery</p>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-6">Featured Products for Men</h2>
+        <p class="text-muted mb-8">
+          {healthProducts.length} product{healthProducts.length !== 1 ? 's' : ''} designed to support men's health and wellness goals
+        </p>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {productsWithImages.map((product) => (
+            <Card
+              imageComponent={product.featuredImage}
+              url={`/category/${product.data.category}/product/${createProductSlug(product.data.title)}`}
+              title={product.data.title}
+              headingLevel="h3"
+              footer={`Price: ${product.data.price}`}
+              fullHeight={true}
+            >
+              <span slot="meta">
+                {product.data.tags?.map((tag: string) => (
+                  <Badge>{tag}</Badge>
+                ))}
+              </span>
+              {product.data.description}
+              <div class="mt-4">
+                <Link
+                  href={product.data.affiliateUrl}
+                  isExternal
+                  isButton
+                  type="primary"
+                  class="w-full text-center"
+                  animateOnHover
+                  animationType="boop"
+                >
+                  Buy Now (Affiliate Link)
+                </Link>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <!-- Men's Health Tips -->
+      <div class="mt-16 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 rounded-lg p-8 border border-blue-200 dark:border-blue-800">
+        <h2 class="text-2xl font-bold mb-6 text-center">Men's Health Tips</h2>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-green-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Regular Exercise</h4>
+                <p class="text-sm text-muted">Aim for 150 minutes of moderate aerobic activity per week plus strength training twice weekly.</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-green-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Heart Health</h4>
+                <p class="text-sm text-muted">Monitor blood pressure regularly and maintain a heart-healthy diet rich in omega-3s.</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-green-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Prostate Screening</h4>
+                <p class="text-sm text-muted">Discuss prostate cancer screening with your doctor starting at age 50 (or earlier if high risk).</p>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <Icon name="lucide:check-circle" size="1.5rem" class="text-green-600 mt-1 flex-shrink-0" />
+              <div>
+                <h4 class="font-semibold">Mental Health</h4>
+                <p class="text-sm text-muted">Don't neglect mental health - stress management and work-life balance are crucial.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Category -->
+      <div class="mt-12 text-center">
+        <Link href="/categories/health-wellness" isButton type="outline">
+          <Icon name="lucide:arrow-left" size="1rem" />
+          Back to Health & Wellness
+        </Link>
+      </div>
+    </div>
+  </section>
+</DefaultLayout>
+
+<style>
+  .category-card {
+    background: var(--color-background);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+</style>

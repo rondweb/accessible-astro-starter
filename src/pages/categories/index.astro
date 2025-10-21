@@ -1,0 +1,147 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import PageHeader from '@components/PageHeader.astro'
+import { Heading, Link } from 'accessible-astro-components'
+import { Icon } from 'astro-icon/components'
+import { getCollection } from 'astro:content'
+
+// Get all products to determine available categories
+const products = await getCollection('products')
+
+// Group products by category and count them
+const categoriesData = products.reduce((acc, product) => {
+  const category = product.data.category
+  if (!acc[category]) {
+    acc[category] = {
+      count: 0,
+      products: []
+    }
+  }
+  acc[category].count++
+  acc[category].products.push(product)
+  return acc
+}, {} as Record<string, { count: number, products: any[] }>)
+
+// Category display configuration
+const categoryConfig = {
+  electronics: {
+    title: 'Electronics',
+    description: 'High-quality electronic devices, computers, smartphones and accessories',
+    icon: 'lucide:laptop',
+    color: 'primary'
+  },
+  fashion: {
+    title: 'Fashion & Clothing',
+    description: 'Clothing, footwear and accessories for all occasions and styles',
+    icon: 'lucide:shirt',
+    color: 'secondary'
+  },
+  sports: {
+    title: 'Sports & Fitness',
+    description: 'Sports equipment, supplements and fitness items',
+    icon: 'lucide:dumbbell',
+    color: 'warning'
+  }
+}
+
+// Add default config for categories not explicitly defined
+Object.keys(categoriesData).forEach(category => {
+  if (!categoryConfig[category]) {
+    categoryConfig[category] = {
+      title: category.charAt(0).toUpperCase() + category.slice(1),
+      description: `${category.charAt(0).toUpperCase() + category.slice(1)} products and accessories`,
+      icon: 'lucide:package',
+      color: 'neutral'
+    }
+  }
+})
+---
+
+<DefaultLayout
+  title="Product Categories"
+  description="Browse all product categories and find exactly what you need"
+>
+  <PageHeader
+    title="Product Categories"
+    subtitle="Explore our complete selection of products organized by category"
+    bgType="bordered"
+  />
+
+  <section class="my-12">
+    <div class="container">
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {Object.entries(categoriesData).map(([categorySlug, data]) => {
+          const config = categoryConfig[categorySlug as keyof typeof categoryConfig] || categoryConfig.electronics
+          const colorClasses = {
+            primary: 'bg-primary-100 text-primary-600 border-primary-200',
+            secondary: 'bg-secondary-100 text-secondary-600 border-secondary-200',
+            warning: 'bg-warning-100 text-warning-600 border-warning-200',
+            neutral: 'bg-neutral-100 text-neutral-600 border-neutral-200'
+          }
+
+          return (
+            <div class="category-card group p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <div class="text-center">
+                <div class={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${colorClasses[config.color as keyof typeof colorClasses]}`}>
+                  <Icon name={config.icon} size="2rem" />
+                </div>
+                <Heading level="h3" class="mb-4">{config.title}</Heading>
+                <p class="text-muted mb-4 text-sm">
+                  {data.count} product{data.count !== 1 ? 's' : ''} available
+                </p>
+                <p class="text-muted mb-6">
+                  {config.description}
+                </p>
+                <Link href={`/categories/${categorySlug}`} isButton type="outline" class="w-full">
+                  View Products ({data.count})
+                </Link>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <!-- Summary Statistics -->
+      <div class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div class="text-center p-6 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+          <div class="text-3xl font-bold text-primary-900 dark:text-primary-100 mb-2">
+            {products.length}
+          </div>
+          <div class="text-sm text-primary-700 dark:text-primary-300">
+            Total Products
+          </div>
+        </div>
+
+        <div class="text-center p-6 bg-secondary-50 dark:bg-secondary-900/20 rounded-lg border border-secondary-200 dark:border-secondary-800">
+          <div class="text-3xl font-bold text-secondary-900 dark:text-secondary-100 mb-2">
+            {Object.keys(categoriesData).length}
+          </div>
+          <div class="text-sm text-secondary-700 dark:text-secondary-300">
+            Categories
+          </div>
+        </div>
+
+        <div class="text-center p-6 bg-accent-50 dark:bg-accent-900/20 rounded-lg border border-accent-200 dark:border-accent-800">
+          <div class="text-3xl font-bold text-accent-900 dark:text-accent-100 mb-2">
+            {Math.round(products.length / Object.keys(categoriesData).length)}
+          </div>
+          <div class="text-sm text-accent-700 dark:text-accent-300">
+            Avg Products/Category
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</DefaultLayout>
+
+<style>
+  .category-card {
+    background: var(--color-background);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+</style>

@@ -1,0 +1,363 @@
+---
+// Product Images Component
+// Provides organized image handling for products with carousel support
+
+// Helper function to get product slug from product ID
+export function getProductSlug(productId: string): string {
+  // Remove category prefix from product ID
+  return productId.replace('sports-outdoors-', '').replace('electronics-', '').replace('fashion-', '')
+}
+
+// Product image mapping - maps slugs to arrays of image paths (for carousel support)
+// Supports multiple formats: .webp, .png, .jpg, .jpeg, .avif, .svg
+const productImageMap = {
+  'yeti-rambler-tumbler': [
+    '/src/assets/images/products/yeti-rambler-tumbler.webp',
+    '/src/assets/images/products/yeti-rambler-tumbler-2.webp',
+    '/src/assets/images/products/yeti-rambler-tumbler-3.webp'
+  ],
+  'black-diamond-headlamp': [
+    '/src/assets/images/products/black-diamond-headlamp.webp'
+  ],
+  'owala-freesip-bottle': [
+    '/src/assets/images/products/owala-freesip-bottle.webp'
+  ],
+  'iphone-15-pro': [
+    '/src/assets/images/products/iphone-15-pro.webp'
+  ],
+  'nike-air-max-shoes': [
+    '/src/assets/images/products/nike-air-max-shoes.webp'
+  ],
+  // Example with mixed formats (for demonstration)
+  'mixed-formats-demo': [
+    '/src/assets/images/products/yeti-rambler-tumbler.webp',  // WebP
+    '/src/assets/images/products/black-diamond-headlamp.webp'  // WebP
+  ],
+}
+
+// Component props
+interface Props {
+  productSlug: string
+  alt: string
+  class?: string
+  showCarousel?: boolean
+  autoplay?: boolean
+  autoplayDelay?: number
+  productImage?: string // New prop for product image from frontmatter
+}
+
+const {
+  productSlug,
+  alt,
+  class: className = '',
+  showCarousel = false,
+  autoplay = false,
+  autoplayDelay = 3000,
+  productImage // Image from product frontmatter
+} = Astro.props
+
+// Use product image from frontmatter if available, otherwise fall back to mapped images
+const images = productImage ? [productImage] : (productImageMap[productSlug as keyof typeof productImageMap] || [])
+
+// Generate unique ID for this component instance
+const componentId = `product-images-${Math.random().toString(36).substr(2, 9)}`
+---
+
+<div class={`product-images-wrapper ${className}`}>
+  {(() => {
+    if (images.length === 0) {
+      return (
+        <div class="no-image-placeholder bg-white border-2 border-dashed border-gray-300 flex items-center justify-center" style="min-height: 200px;">
+          <div class="text-center p-6">
+            <div class="text-6xl mb-4 text-gray-400">🖼️</div>
+            <div class="text-lg text-gray-500 font-medium mb-2">Imagem Indisponível</div>
+            <div class="text-sm text-gray-400">{alt || 'Produto sem imagem'}</div>
+            <div class="text-xs text-gray-300 mt-2">Adicione uma imagem para melhorar a apresentação</div>
+          </div>
+        </div>
+      )
+    }
+
+    if (showCarousel && images.length > 1) {
+      return (
+        <div class="product-image-carousel" data-component-id={componentId} data-autoplay={autoplay} data-delay={autoplayDelay}>
+          <div class="carousel-container">
+            {images.map((imagePath, index) => (
+              <div class={`carousel-slide ${index === 0 ? 'active' : ''}`}>
+                <img src={imagePath} alt={`${alt} - Image ${index + 1}`} class="carousel-image" />
+              </div>
+            ))}
+          </div>
+          <div class="carousel-indicators">
+            {images.map((_, index) => (
+              <button
+                class={`carousel-dot ${index === 0 ? 'active' : ''}`}
+                data-slide={index}
+                aria-label={`View image ${index + 1} of ${images.length}`}
+              />
+            ))}
+          </div>
+          <div class="carousel-navigation">
+            <button class="carousel-prev" aria-label="Previous image">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+            <button class="carousel-next" aria-label="Next image">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div class="single-image-container">
+        <img src={images[0]} alt={alt} class="single-image" />
+      </div>
+    )
+  })()}
+</div>
+
+<style>
+  /* Single Image Styles */
+  .single-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .single-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Carousel Styles */
+  .product-image-carousel {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 200px;
+  }
+
+  .carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .carousel-slide.active {
+    opacity: 1;
+  }
+
+  .carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .carousel-indicators {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+  }
+
+  .carousel-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 2px solid white;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .carousel-dot:hover,
+  .carousel-dot.active {
+    background: white;
+    transform: scale(1.1);
+  }
+
+  .carousel-prev,
+  .carousel-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .carousel-prev {
+    left: 1rem;
+  }
+
+  .carousel-next {
+    right: 1rem;
+  }
+
+  .carousel-prev:hover,
+  .carousel-next:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  /* No Image Placeholder */
+  .no-image-placeholder {
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+</style>
+
+<script>
+  class ProductImageCarousel {
+    private element: HTMLElement;
+    private slides: NodeListOf<Element>;
+    private dots: NodeListOf<Element>;
+    private prevBtn: HTMLButtonElement | null;
+    private nextBtn: HTMLButtonElement | null;
+    private currentSlide: number;
+    private autoplayTimer: number | null;
+    private autoplayDelay: number;
+
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.slides = this.element.querySelectorAll('.carousel-slide');
+      this.dots = this.element.querySelectorAll('.carousel-dot');
+      this.prevBtn = this.element.querySelector('.carousel-prev');
+      this.nextBtn = this.element.querySelector('.carousel-next');
+
+      this.currentSlide = 0;
+      this.autoplayDelay = parseInt(this.element.getAttribute('data-delay') || '3000');
+      this.autoplayTimer = null;
+
+      if (this.slides.length > 1) {
+        this.init();
+      }
+    }
+
+    init() {
+      this.setupEventListeners();
+      this.startAutoplay();
+    }
+
+    setupEventListeners() {
+      // Navigation buttons
+      this.prevBtn?.addEventListener('click', () => this.previousSlide());
+      this.nextBtn?.addEventListener('click', () => this.nextSlide());
+
+      // Dot indicators
+      this.dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => this.goToSlide(index));
+      });
+
+      // Pause autoplay on hover
+      this.element.addEventListener('mouseenter', () => this.pauseAutoplay());
+      this.element.addEventListener('mouseleave', () => this.startAutoplay());
+
+      // Keyboard navigation
+      this.element.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          this.previousSlide();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          this.nextSlide();
+        }
+      });
+    }
+
+    goToSlide(index: number) {
+      if (index < 0 || index >= this.slides.length) return;
+
+      this.currentSlide = index;
+      this.updateCarousel();
+      this.restartAutoplay();
+    }
+
+    nextSlide() {
+      this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+      this.updateCarousel();
+      this.restartAutoplay();
+    }
+
+    previousSlide() {
+      this.currentSlide = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
+      this.updateCarousel();
+      this.restartAutoplay();
+    }
+
+    updateCarousel() {
+      // Update slides
+      this.slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === this.currentSlide);
+      });
+
+      // Update dots
+      this.dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentSlide);
+      });
+    }
+
+    startAutoplay() {
+      if (this.slides.length <= 1) return;
+
+      this.pauseAutoplay();
+      if (this.element.getAttribute('data-autoplay') === 'true') {
+        this.autoplayTimer = window.setInterval(() => {
+          this.nextSlide();
+        }, this.autoplayDelay);
+      }
+    }
+
+    pauseAutoplay() {
+      if (this.autoplayTimer) {
+        clearInterval(this.autoplayTimer);
+        this.autoplayTimer = null;
+      }
+    }
+
+    restartAutoplay() {
+      if (this.slides.length <= 1) return;
+      this.startAutoplay();
+    }
+  }
+
+  // Initialize all carousels when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    const carousels = document.querySelectorAll('.product-image-carousel');
+    carousels.forEach(carousel => new ProductImageCarousel(carousel as HTMLElement));
+  });
+</script>

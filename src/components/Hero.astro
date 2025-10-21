@@ -4,56 +4,185 @@ import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 
 /**
- * Hero Component
+ * Hero Banner Component
  *
- * @description A component that displays a hero section with a title, description, and image
+ * @description A component that displays a horizontal banner with images for affiliate links hub
  */
 interface Props {
   /**
-   * The source URL for the image
+   * Array of image sources for the carousel
    */
-  src?: string
+  images?: string[]
+  /**
+   * Whether to show as carousel or single image
+   */
+  carousel?: boolean
+  /**
+   * Auto-play interval for carousel in milliseconds
+   */
+  autoplay?: number
 }
 
-const { src = '/astronaut-hero-img.webp' }: Props = Astro.props
+const { images = ['/astronaut-hero-img.webp'], carousel = false, autoplay = 5000 }: Props = Astro.props
 ---
 
-<section class="hero my-24">
+<section class="hero-banner my-24">
   <div class="container">
-    <div class="grid grid-cols-1 items-center gap-24 lg:grid-cols-2">
-      <div class="flex flex-col items-center gap-8 md:items-start">
-        <h1 class="text-center text-6xl md:text-left lg:text-8xl">
-          <slot><span class="text-gradient">Accessible</span> Starter for Astro</slot>
-        </h1>
-        <div class="flex flex-col gap-3 min-[500px]:flex-row">
-          <Link
-            href="https://github.com/incluud/accessible-astro-starter"
-            isButton
-            type="primary"
-            animateOnHover
-            animationType="boop"
-          >
-            <Icon aria-hidden="true" name="lucide:star" size="1.5rem" />
-            Star on GitHub
-          </Link>
-          <Link
-            href="https://accessible-astro.incluud.dev/"
-            isButton
-            type="secondary"
-            animateOnHover
-            animationType="boop"
-          >
-            <Icon aria-hidden="true" name="lucide:bookmark" size="1.5rem" />
-            Read the docs
-          </Link>
+    <div class="relative overflow-hidden rounded-lg">
+      {carousel ? (
+        <div class="carousel" data-autoplay={autoplay}>
+          {images.map((image, index) => (
+            <div class="carousel-slide" key={index}>
+              <Image
+                src={image}
+                alt={`Affiliate banner image ${index + 1}`}
+                decoding="async"
+                width={1200}
+                height={400}
+                loading={index === 0 ? "eager" : "lazy"}
+                class="carousel-image"
+              />
+            </div>
+          ))}
+          <div class="carousel-indicators">
+            {images.map((_, index) => (
+              <button class="carousel-dot" data-slide={index} aria-label={`Go to slide ${index + 1}`} key={index}></button>
+            ))}
+          </div>
+          <button class="carousel-prev" aria-label="Previous slide">
+            <Icon name="lucide:chevron-left" size="2rem" />
+          </button>
+          <button class="carousel-next" aria-label="Next slide">
+            <Icon name="lucide:chevron-right" size="2rem" />
+          </button>
         </div>
-      </div>
-      <Image class="hidden lg:block" src={src} alt="" decoding="async" width={800} height={600} loading="eager" />
+      ) : (
+        <div class="single-banner">
+          <Image
+            src={images[0]}
+            alt="Affiliate banner image"
+            decoding="async"
+            width={1200}
+            height={400}
+            loading="eager"
+            class="banner-image"
+          />
+        </div>
+      )}
     </div>
   </div>
 </section>
 
 <style lang="scss">
+  .hero-banner {
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+
+      &-slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+
+        &.active {
+          opacity: 1;
+        }
+      }
+
+      &-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--radius-lg);
+      }
+
+      &-indicators {
+        position: absolute;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.5rem;
+        z-index: 10;
+      }
+
+      &-dot {
+        width: 0.75rem;
+        height: 0.75rem;
+        border-radius: 50%;
+        border: 2px solid var(--color-white);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover,
+        &.active {
+          background: var(--color-white);
+          transform: scale(1.1);
+        }
+      }
+
+      &-prev,
+      &-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        border: none;
+        color: var(--color-white);
+        padding: 0.75rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.7);
+          transform: translateY(-50%) scale(1.1);
+        }
+
+        svg {
+          display: block;
+        }
+      }
+
+      &-prev {
+        left: 1rem;
+      }
+
+      &-next {
+        right: 1rem;
+      }
+    }
+
+    .single-banner {
+      width: 100%;
+      height: 400px;
+      overflow: hidden;
+      border-radius: var(--radius-lg);
+
+      .banner-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--radius-lg);
+      }
+    }
+
+    // Pause autoplay on hover
+    &:hover .carousel {
+      &[data-autoplay] {
+        animation-play-state: paused;
+      }
+    }
+  }
+
+  // Legacy styles for backward compatibility
   h1 {
     text-wrap: unset;
   }
@@ -69,3 +198,170 @@ const { src = '/astronaut-hero-img.webp' }: Props = Astro.props
     -webkit-text-fill-color: transparent;
   }
 </style>
+
+<script>
+  class CarouselManager {
+    private carousel: HTMLElement;
+    private slides: NodeListOf<Element>;
+    private dots: NodeListOf<Element>;
+    private prevBtn: HTMLButtonElement | null;
+    private nextBtn: HTMLButtonElement | null;
+    private currentSlide: number;
+    private autoplayInterval: number;
+    private autoplayTimer: number | null;
+    private startX: number;
+    private endX: number;
+
+    constructor(carouselElement: HTMLElement) {
+      this.carousel = carouselElement;
+      this.slides = this.carousel.querySelectorAll('.carousel-slide');
+      this.dots = this.carousel.querySelectorAll('.carousel-dot');
+      this.prevBtn = this.carousel.querySelector('.carousel-prev') as HTMLButtonElement;
+      this.nextBtn = this.carousel.querySelector('.carousel-next') as HTMLButtonElement;
+
+      this.currentSlide = 0;
+      this.autoplayInterval = parseInt(this.carousel.getAttribute('data-autoplay') || '5000');
+      this.autoplayTimer = null;
+      this.startX = 0;
+      this.endX = 0;
+
+      this.init();
+    }
+
+    init() {
+      if (this.slides.length <= 1) return;
+
+      this.setupEventListeners();
+      this.startAutoplay();
+      this.updateCarousel();
+    }
+
+    setupEventListeners() {
+      // Navigation buttons
+      this.prevBtn?.addEventListener('click', () => this.previousSlide());
+      this.nextBtn?.addEventListener('click', () => this.nextSlide());
+
+      // Dot indicators
+      this.dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => this.goToSlide(index));
+      });
+
+      // Pause autoplay on hover
+      this.carousel.addEventListener('mouseenter', () => this.pauseAutoplay());
+      this.carousel.addEventListener('mouseleave', () => this.startAutoplay());
+
+      // Keyboard navigation
+      this.carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          this.previousSlide();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          this.nextSlide();
+        }
+      });
+
+      // Touch/swipe support
+      this.carousel.addEventListener('touchstart', (e: TouchEvent) => {
+        this.startX = e.changedTouches[0].screenX;
+      });
+
+      this.carousel.addEventListener('touchend', (e: TouchEvent) => {
+        this.endX = e.changedTouches[0].screenX;
+        this.handleSwipe();
+      });
+
+      // Pause autoplay when page is not visible
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this.pauseAutoplay();
+        } else {
+          this.startAutoplay();
+        }
+      });
+    }
+
+    handleSwipe() {
+      const threshold = 50;
+      const diff = this.startX - this.endX;
+
+      if (Math.abs(diff) > threshold) {
+        if (diff > 0) {
+          this.nextSlide();
+        } else {
+          this.previousSlide();
+        }
+      }
+    }
+
+    goToSlide(index: number) {
+      this.currentSlide = index;
+      this.updateCarousel();
+      this.restartAutoplay();
+    }
+
+    nextSlide() {
+      this.currentSlide = (this.currentSlide + 1) % this.slides.length;
+      this.updateCarousel();
+      this.restartAutoplay();
+    }
+
+    previousSlide() {
+      this.currentSlide = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
+      this.updateCarousel();
+      this.restartAutoplay();
+    }
+
+    updateCarousel() {
+      // Update slides
+      this.slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === this.currentSlide);
+      });
+
+      // Update dots
+      this.dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === this.currentSlide);
+      });
+
+      // Update ARIA attributes
+      this.slides.forEach((slide, index) => {
+        slide.setAttribute('aria-hidden', index !== this.currentSlide ? 'true' : 'false');
+      });
+    }
+
+    startAutoplay() {
+      if (this.slides.length <= 1) return;
+
+      this.pauseAutoplay();
+      this.autoplayTimer = window.setInterval(() => {
+        this.nextSlide();
+      }, this.autoplayInterval);
+    }
+
+    pauseAutoplay() {
+      if (this.autoplayTimer) {
+        clearInterval(this.autoplayTimer);
+        this.autoplayTimer = null;
+      }
+    }
+
+    restartAutoplay() {
+      if (this.slides.length <= 1) return;
+      this.startAutoplay();
+    }
+  }
+
+  // Initialize carousels when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(carousel => new CarouselManager(carousel as HTMLElement));
+  });
+
+  // Make carousel focusable for keyboard navigation
+  document.addEventListener('DOMContentLoaded', () => {
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(carousel => {
+      (carousel as HTMLElement).setAttribute('tabindex', '0');
+    });
+  });
+</script>
