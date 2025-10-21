@@ -9,14 +9,48 @@ import type { GetStaticPaths } from 'astro'
 export const getStaticPaths = (async () => {
   const products = await getCollection('products')
 
-  return products.map((product) => ({
-    params: {
-      category: product.data.category,
-      product: product.id
-    },
-    props: { product },
-  }))
+  // Função inline para criar slug - abordagem mais simples e direta
+  const slugify = (text: string) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
+  }
+
+  return products.map((product) => {
+    const productSlug = slugify(product.data.title)
+    return {
+      params: {
+        category: product.data.category,
+        product: productSlug
+      },
+      props: {
+        product,
+        productSlug: productSlug
+      },
+    }
+  })
 }) satisfies GetStaticPaths
+
+// Função para formatar o título da categoria removendo hífens desnecessários
+function formatCategoryTitle(slug: string): string {
+  switch(slug) {
+    case 'health-wellness-for-her':
+      return 'Health & Wellness for Her'
+    case 'home-garden':
+      return 'Home & Garden'
+    case 'sports-outdoors':
+      return 'Sports & Outdoors'
+    default:
+      return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' & ')
+  }
+}
 
 interface Props {
   product: any
@@ -32,7 +66,7 @@ const { Content } = await render(product)
 >
   <PageHeader
     title={product.data.title}
-    subtitle={`Product Review - ${product.data.category}`}
+    subtitle={`Product Review - ${formatCategoryTitle(product.data.category)}`}
     bgType="bordered"
   />
 
@@ -44,7 +78,7 @@ const { Content } = await render(product)
           <div class="lg:col-span-1 lg:order-first">
             <div class="sticky top-8 space-y-6 lg:max-w-sm">
               <!-- Price Card -->
-              <div class="bg-primary-50 dark:bg-primary-900/20 p-6 rounded-lg border border-primary-200 dark:border-primary-800">
+              <div class="bg-primary-50 dark:bg-primary-900/20 p-6 rounded-lg border border-primary-200 dark:border-primary-800 shadow-sm">
                 <h3 class="text-2xl font-bold text-primary-900 dark:text-primary-100 mb-4">
                   {product.data.price}
                 </h3>
@@ -62,7 +96,7 @@ const { Content } = await render(product)
               </div>
 
               <!-- Tags -->
-              <div class="bg-secondary-50 dark:bg-secondary-900/20 p-6 rounded-lg border border-secondary-200 dark:border-secondary-800">
+              <div class="bg-secondary-50 dark:bg-secondary-900/20 p-6 rounded-lg border border-secondary-200 dark:border-secondary-800 shadow-sm">
                 <h4 class="text-lg font-semibold mb-4 text-secondary-900 dark:text-secondary-100">
                   Tags
                 </h4>
@@ -74,12 +108,12 @@ const { Content } = await render(product)
               </div>
 
               <!-- Category -->
-              <div class="bg-accent-50 dark:bg-accent-900/20 p-6 rounded-lg border border-accent-200 dark:border-accent-800">
+              <div class="bg-accent-50 dark:bg-accent-900/20 p-6 rounded-lg border border-accent-200 dark:border-accent-800 shadow-sm">
                 <h4 class="text-lg font-semibold mb-4 text-accent-900 dark:text-accent-100">
-                  Category
+                  Categoria
                 </h4>
-                <Link href={`/categories/${product.data.category}`} class="text-accent-600 dark:text-accent-400 hover:underline">
-                  {product.data.category.charAt(0).toUpperCase() + product.data.category.slice(1)}
+                <Link href={`/${product.data.category}`} class="text-accent-600 dark:text-accent-400 hover:underline">
+                  {formatCategoryTitle(product.data.category)}
                 </Link>
               </div>
             </div>
@@ -106,14 +140,14 @@ const { Content } = await render(product)
                 <Content />
 
                 <!-- Additional Product Features Section -->
-                <div class="mt-12 p-6 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+                <div class="mt-12 p-6 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 shadow-sm">
                   <h3 class="text-xl font-bold text-primary-900 dark:text-primary-100 mb-4">
                     📋 Detalhes do Produto
                   </h3>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <span class="font-semibold text-primary-700 dark:text-primary-300">Categoria:</span>
-                      <span class="ml-2 text-primary-600 dark:text-primary-400">{product.data.category.charAt(0).toUpperCase() + product.data.category.slice(1)}</span>
+                      <span class="ml-2 text-primary-600 dark:text-primary-400">{formatCategoryTitle(product.data.category)}</span>
                     </div>
                     <div>
                       <span class="font-semibold text-primary-700 dark:text-primary-300">Preço:</span>

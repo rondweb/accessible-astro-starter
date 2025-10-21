@@ -3,121 +3,123 @@ import DefaultLayout from '@layouts/DefaultLayout.astro'
 import Hero from '@components/Hero.astro'
 import { Heading, Link } from 'accessible-astro-components'
 import { Icon } from 'astro-icon/components'
+import { getCollection } from 'astro:content'
+
+// Função para criar slug amigável para URL a partir do título do produto
+function createProductSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+    .trim()
+    .replace(/\s+/g, '-') // Substitui espaços por hífens
+    .replace(/-+/g, '-') // Remove hífens múltiplos
+    .replace(/^-|-$/g, '') // Remove hífens do início e fim
+}
+
+// Obter produtos e agrupar por categoria
+const products = await getCollection('products')
+const productsByCategory = products.reduce((acc, product) => {
+  const category = product.data.category
+  if (!acc[category]) {
+    acc[category] = []
+  }
+  acc[category].push(product)
+  return acc
+}, {} as Record<string, any[]>)
+
+// Definir categorias disponíveis com seus dados
+const categories = [
+  {
+    slug: 'electronics',
+    title: 'Electronics',
+    description: 'Latest gadgets, smartphones, laptops, and tech accessories to power your digital life.',
+    icon: 'lucide:laptop',
+    color: 'primary'
+  },
+  {
+    slug: 'fashion',
+    title: 'Fashion & Clothing',
+    description: 'Trendy clothing, stylish footwear, and fashion accessories for every occasion.',
+    icon: 'lucide:shirt',
+    color: 'secondary'
+  },
+  {
+    slug: 'home-garden',
+    title: 'Home & Garden',
+    description: 'Beautiful furniture, smart appliances, and garden essentials to create your perfect space.',
+    icon: 'lucide:home',
+    color: 'accent'
+  },
+  {
+    slug: 'books',
+    title: 'Books & Education',
+    description: 'Inspiring books, e-learning courses, and educational materials to expand your knowledge.',
+    icon: 'lucide:book-open',
+    color: 'success'
+  },
+  {
+    slug: 'sports',
+    title: 'Sports & Fitness',
+    description: 'Premium sports gear, fitness equipment, and nutrition supplements for peak performance.',
+    icon: 'lucide:dumbbell',
+    color: 'warning'
+  },
+  {
+    slug: 'arts-crafts',
+    title: 'Arts & Crafts',
+    description: 'Creative supplies, crafting materials, and art tools to unleash your imagination.',
+    icon: 'lucide:palette',
+    color: 'info'
+  },
+  {
+    slug: 'health-wellness',
+    title: 'Health & Wellness',
+    description: 'Premium vitamins, natural supplements, and wellness products for optimal health.',
+    icon: 'lucide:heart',
+    color: 'success'
+  },
+  {
+    slug: 'health-wellness-for-her',
+    title: 'Health & Wellness for Her',
+    description: 'Specialized wellness solutions designed specifically for women\'s health needs.',
+    icon: 'lucide:heart',
+    color: 'success'
+  }
+]
+
+// Filtrar apenas categorias que têm produtos
+const categoriesWithProducts = categories.filter(category =>
+  productsByCategory[category.slug] && productsByCategory[category.slug].length > 0
+)
 ---
 
 <DefaultLayout title="Home">
   <Hero />
-  <section class="my-64">
+  <section class="my-32">
     <div class="container">
-      <Heading level="h2" class="mb-8 text-center">Product Categories</Heading>
-      <p class="text-xl text-center mb-16 max-w-3xl mx-auto">
-        Explore our selection of products organized by category. Find exactly what you need for your project.
+      <Heading level="h2" class="mb-6 text-center">🛍️ Discover Amazing Products</Heading>
+      <p class="text-xl text-center mb-12 max-w-4xl mx-auto leading-relaxed">
+        From cutting-edge electronics to wellness essentials, explore our curated collection designed to enhance your lifestyle and projects.
       </p>
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        <div class="category-card p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-primary-100 rounded-full flex items-center justify-center">
-              <Icon name="lucide:laptop" size="2rem" class="text-primary-600" />
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {categoriesWithProducts.map((category) => (
+          <div class="category-card p-6 rounded-xl border border-border-color-subtle hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2 bg-gradient-to-br from-background to-background/50">
+            <div class="text-center">
+              <div class={`w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-${category.color}-100 to-${category.color}-50 rounded-2xl flex items-center justify-center shadow-lg`}>
+                <Icon name={category.icon} size="2.5rem" class={`text-${category.color}-600`} />
+              </div>
+              <Heading level="h3" class="mb-3 text-lg font-bold">{category.title}</Heading>
+              <p class="text-muted mb-5 text-sm leading-relaxed min-h-[3rem] flex items-center justify-center">
+                {category.description}
+              </p>
+              <Link href={`/${category.slug}`} isButton type="primary" class="w-full py-3 px-6 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                ✨ Explore Collection
+              </Link>
             </div>
-            <Heading level="h3" class="mb-4">Electronics</Heading>
-            <p class="text-muted mb-6">
-              High-quality electronic devices, computers, smartphones and accessories.
-            </p>
-            <Link href="/categories/electronics" isButton type="outline" class="w-full">
-              View Products
-            </Link>
           </div>
-        </div>
-
-        <div class="category-card p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-secondary-100 rounded-full flex items-center justify-center">
-              <Icon name="lucide:shirt" size="2rem" class="text-secondary-600" />
-            </div>
-            <Heading level="h3" class="mb-4">Fashion & Clothing</Heading>
-            <p class="text-muted mb-6">
-              Clothing, footwear and accessories for all occasions and styles.
-            </p>
-            <Link href="/categories/fashion" isButton type="outline" class="w-full">
-              View Products
-            </Link>
-          </div>
-        </div>
-
-        <div class="category-card p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-accent-100 rounded-full flex items-center justify-center">
-              <Icon name="lucide:home" size="2rem" class="text-accent-600" />
-            </div>
-            <Heading level="h3" class="mb-4">Home & Garden</Heading>
-            <p class="text-muted mb-6">
-              Furniture, decoration, household items and garden products.
-            </p>
-            <Link href="/categories/home-garden" isButton type="outline" class="w-full">
-              View Products
-            </Link>
-          </div>
-        </div>
-
-        <div class="category-card p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-success-100 rounded-full flex items-center justify-center">
-              <Icon name="lucide:book-open" size="2rem" class="text-success-600" />
-            </div>
-            <Heading level="h3" class="mb-4">Books & Education</Heading>
-            <p class="text-muted mb-6">
-              Books, e-books, online courses and educational materials.
-            </p>
-            <Link href="/categories/books" isButton type="outline" class="w-full">
-              View Products
-            </Link>
-          </div>
-        </div>
-
-        <div class="category-card p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-warning-100 rounded-full flex items-center justify-center">
-              <Icon name="lucide:dumbbell" size="2rem" class="text-warning-600" />
-            </div>
-            <Heading level="h3" class="mb-4">Sports & Fitness</Heading>
-            <p class="text-muted mb-6">
-              Sports equipment, supplements and fitness items.
-            </p>
-            <Link href="/categories/sports" isButton type="outline" class="w-full">
-              View Products
-            </Link>
-          </div>
-        </div>
-
-        <div class="category-card p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-info-100 rounded-full flex items-center justify-center">
-              <Icon name="lucide:palette" size="2rem" class="text-info-600" />
-            </div>
-            <Heading level="h3" class="mb-4">Arts & Crafts</Heading>
-            <p class="text-muted mb-6">
-              Materials for art, crafts and handmade work.
-            </p>
-            <Link href="/categories/arts-crafts" isButton type="outline" class="w-full">
-              View Products
-            </Link>
-          </div>
-        </div>
-
-        <div class="category-card p-8 rounded-lg border border-border-color-subtle hover:shadow-lg transition-all duration-300 hover:scale-105">
-          <div class="text-center">
-            <div class="w-16 h-16 mx-auto mb-4 bg-success-100 rounded-full flex items-center justify-center">
-              <Icon name="lucide:heart" size="2rem" class="text-success-600" />
-            </div>
-            <Heading level="h3" class="mb-4">Health & Wellness</Heading>
-            <p class="text-muted mb-6">
-              Vitamins, supplements, fitness equipment and wellness products.
-            </p>
-            <Link href="/categories/health-wellness" isButton type="outline" class="w-full">
-              View Products
-            </Link>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   </section>
@@ -126,11 +128,32 @@ import { Icon } from 'astro-icon/components'
 <style>
   .category-card {
     background: var(--color-background);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border-subtle);
 
     &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--color-primary-200);
+      background: linear-gradient(135deg, var(--color-background) 0%, var(--color-primary-50) 100%);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    &:hover::before {
+      opacity: 1;
     }
   }
 </style>

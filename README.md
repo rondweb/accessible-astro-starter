@@ -1,4 +1,4 @@
-# Accessible Astro Starter - E-commerce Project
+# UltimateDeal - E-commerce Project
 
 A fully accessible, modern e-commerce website built with Astro, featuring product categories, reviews, and an organized image management system.
 

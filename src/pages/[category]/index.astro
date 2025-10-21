@@ -30,6 +30,20 @@ import projectImage6 from '@assets/images/projects/project-image-6.png'
 export const getStaticPaths = (async ({ paginate }) => {
   const products = await getCollection('products')
 
+  // Função para formatar o título da categoria removendo hífens desnecessários
+  const formatCategoryTitle = (slug: string): string => {
+    switch(slug) {
+      case 'health-wellness-for-her':
+        return 'Health & Wellness for Her'
+      case 'home-garden':
+        return 'Home & Garden'
+      case 'sports-outdoors':
+        return 'Sports & Outdoors'
+      default:
+        return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' & ')
+    }
+  }
+
   // Group products by category
   const productsByCategory = products.reduce((acc, product) => {
     const category = product.data.category
@@ -64,12 +78,12 @@ export const getStaticPaths = (async ({ paginate }) => {
           lastPage: Math.ceil(productsWithImages.length / 6),
           url: {
             prev: null,
-            next: productsWithImages.length > 6 ? `/categories/${categorySlug}/2` : null
+            next: productsWithImages.length > 6 ? `/${categorySlug}/2` : null
           }
         },
         category: {
-          title: categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1),
-          description: `${categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1)} products and accessories`,
+          title: formatCategoryTitle(categorySlug),
+          description: `${formatCategoryTitle(categorySlug)} products and accessories`,
           slug: categorySlug
         }
       }
@@ -122,7 +136,7 @@ const { page, category } = Astro.props
             <li>
               <Card
                 imageComponent={product.featuredImage}
-                url={`/category/${product.data.category}/product/${createProductSlug(product.data.title)}`}
+                url={`/${product.data.category}/${createProductSlug(product.data.title)}`}
                 title={product.data.title}
                 headingLevel="h2"
                 footer={`Price: ${product.data.price}`}
@@ -156,10 +170,10 @@ const { page, category } = Astro.props
         page && page.lastPage > 1 && (
           <div class="mt-12 grid place-content-center">
             <Pagination
-              firstPage={page.url.prev ? `/categories/${category.slug}` : null}
+              firstPage={page.url.prev ? `/${category.slug}` : null}
               previousPage={page.url.prev ? page.url.prev : null}
               nextPage={page.url.next ? page.url.next : null}
-              lastPage={page.url.next ? `/categories/${category.slug}/${page.lastPage}` : null}
+              lastPage={page.url.next ? `/${category.slug}/${page.lastPage}` : null}
               currentPage={`${page.currentPage}`}
               totalPages={`${page.lastPage}`}
               ariaLabel={`${category.title} category pagination`}
