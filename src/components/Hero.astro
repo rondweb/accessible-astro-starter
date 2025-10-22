@@ -1,5 +1,4 @@
 ---
-import { Link } from 'accessible-astro-components'
 import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 
@@ -32,7 +31,7 @@ const { images = ['/astronaut-hero-img.webp'], carousel = false, autoplay = 5000
       {carousel ? (
         <div class="carousel" data-autoplay={autoplay}>
           {images.map((image, index) => (
-            <div class="carousel-slide" key={index}>
+            <div class="carousel-slide">
               <Image
                 src={image}
                 alt={`Affiliate banner image ${index + 1}`}
@@ -46,7 +45,7 @@ const { images = ['/astronaut-hero-img.webp'], carousel = false, autoplay = 5000
           ))}
           <div class="carousel-indicators">
             {images.map((_, index) => (
-              <button class="carousel-dot" data-slide={index} aria-label={`Go to slide ${index + 1}`} key={index}></button>
+              <button class="carousel-dot" data-slide={index} aria-label={`Go to slide ${index + 1}`}></button>
             ))}
           </div>
           <button class="carousel-prev" aria-label="Previous slide">
@@ -351,17 +350,34 @@ const { images = ['/astronaut-hero-img.webp'], carousel = false, autoplay = 5000
     }
   }
 
-  // Initialize carousels when DOM is loaded
-  document.addEventListener('DOMContentLoaded', () => {
-    const carousels = document.querySelectorAll('.carousel');
-    carousels.forEach(carousel => new CarouselManager(carousel as HTMLElement));
-  });
-
-  // Make carousel focusable for keyboard navigation
-  document.addEventListener('DOMContentLoaded', () => {
+  // Initialize carousels when DOM is loaded or page is navigated to
+  const initializeCarousels = () => {
     const carousels = document.querySelectorAll('.carousel');
     carousels.forEach(carousel => {
+      // Check if carousel is already initialized
+      if (carousel.hasAttribute('data-carousel-initialized')) {
+        return;
+      }
+
+      new CarouselManager(carousel as HTMLElement);
+      (carousel as HTMLElement).setAttribute('data-carousel-initialized', 'true');
       (carousel as HTMLElement).setAttribute('tabindex', '0');
+    });
+  };
+
+  // Initialize on DOM content loaded
+  document.addEventListener('DOMContentLoaded', initializeCarousels);
+
+  // Initialize on Astro page navigation
+  document.addEventListener('astro:page-load', initializeCarousels);
+
+  // Also initialize on before navigation to ensure cleanup
+  document.addEventListener('astro:before-swap', () => {
+    // Clean up any existing intervals/timers if needed
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(carousel => {
+      // Remove the initialized flag so it can be reinitialized
+      carousel.removeAttribute('data-carousel-initialized');
     });
   });
 </script>

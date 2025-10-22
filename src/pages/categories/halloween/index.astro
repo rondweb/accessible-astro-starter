@@ -1,0 +1,520 @@
+---
+import DefaultLayout from '@layouts/DefaultLayout.astro'
+import { Badge, Card, Link } from 'accessible-astro-components'
+import { getCollection } from 'astro:content'
+import { Icon } from 'astro-icon/components'
+
+// Função para criar slug amigável para URL a partir do título do produto
+function createProductSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+    .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+    .trim()
+    .replace(/\s+/g, '-') // Substitui espaços por hífens
+    .replace(/-+/g, '-') // Remove hífens múltiplos
+    .replace(/^-|-$/g, '') // Remove hífens do início e fim
+}
+
+// Get all Halloween products
+const allProducts = await getCollection('products')
+const halloweenProducts = allProducts.filter(product =>
+  product.data.category === 'halloween'
+)
+
+// Import project images for fallback
+import projectImage1 from '@assets/images/projects/project-image-1.png'
+import projectImage2 from '@assets/images/projects/project-image-2.png'
+import projectImage3 from '@assets/images/projects/project-image-3.png'
+import projectImage4 from '@assets/images/projects/project-image-4.png'
+import projectImage5 from '@assets/images/projects/project-image-5.png'
+import projectImage6 from '@assets/images/projects/project-image-6.png'
+
+const projectImages = [projectImage1, projectImage2, projectImage3, projectImage4, projectImage5, projectImage6]
+
+const productsWithImages = halloweenProducts.map((product, index) => ({
+  ...product,
+  featuredImage: product.data.image ? product.data.image : projectImages[index % projectImages.length],
+}))
+---
+
+<DefaultLayout
+  title="Halloween Collection - UltimateDeal"
+  description="Discover our spooky Halloween collection with costumes, decorations, and treats. Perfect for creating the ultimate Halloween experience!"
+>
+  <!-- Halloween Header with Dark Theme -->
+  <div class="relative py-20 overflow-hidden bg-gradient-to-br from-orange-900 via-red-900 to-purple-900">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0">
+      <div class="absolute top-10 left-10 w-20 h-20 bg-orange-500/20 rounded-full animate-pulse"></div>
+      <div class="absolute top-32 right-20 w-16 h-16 bg-purple-500/20 rounded-full animate-bounce"></div>
+      <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-yellow-500/20 rounded-full animate-pulse delay-1000"></div>
+      <div class="absolute bottom-32 right-1/3 w-24 h-24 bg-red-500/20 rounded-full animate-bounce delay-500"></div>
+    </div>
+
+    <div class="container relative z-10">
+      <div class="text-center text-white">
+        <div class="flex justify-center mb-6">
+          <div class="flex items-center space-x-4 text-6xl">
+            <span class="animate-bounce delay-100">🎃</span>
+            <span class="animate-pulse delay-300">👻</span>
+            <span class="animate-bounce delay-500">🦇</span>
+            <span class="animate-pulse delay-700">🕸️</span>
+            <span class="animate-bounce delay-900">🍬</span>
+          </div>
+        </div>
+
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-orange-400 via-red-400 to-purple-400 bg-clip-text text-transparent">
+          HALLOWEEN SPOOKTACULAR
+        </h1>
+
+        <p class="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
+          🎭 Transform your home into a haunted masterpiece! Discover our exclusive collection of spooky decorations, terrifying costumes, and delicious treats that will make this Halloween unforgettable!
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-6 mb-8">
+          <div class="flex items-center gap-2 bg-orange-500/30 backdrop-blur-sm px-6 py-3 rounded-full border border-orange-400/30">
+            <Icon name="lucide:zap" size="1.5rem" class="text-orange-300" />
+            <span class="font-semibold">Free Shipping Over $30</span>
+          </div>
+          <div class="flex items-center gap-2 bg-purple-500/30 backdrop-blur-sm px-6 py-3 rounded-full border border-purple-400/30">
+            <Icon name="lucide:clock" size="1.5rem" class="text-purple-300" />
+            <span class="font-semibold">Limited Time Offers</span>
+          </div>
+          <div class="flex items-center gap-2 bg-red-500/30 backdrop-blur-sm px-6 py-3 rounded-full border border-red-400/30">
+            <Icon name="lucide:star" size="1.5rem" class="text-red-300" />
+            <span class="font-semibold">Halloween Bestsellers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Halloween Hero Section -->
+  <section class="relative py-16 overflow-hidden bg-gradient-to-br from-orange-900 via-purple-900 to-black">
+    <div class="absolute inset-0 bg-[url('/src/assets/images/posts/halloween-bg.svg')] opacity-20"></div>
+    <div class="container relative z-10">
+      <div class="text-center text-white">
+        <h2 class="text-4xl md:text-6xl font-bold mb-6">👻 Halloween Special</h2>
+        <p class="text-xl md:text-2xl mb-8 opacity-90">
+          Transform your home into a haunted masterpiece with our exclusive Halloween collection
+        </p>
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+          <div class="flex items-center gap-2 bg-orange-500/20 px-4 py-2 rounded-full">
+            <Icon name="lucide:zap" size="1.5rem" class="text-orange-400" />
+            <span>Free Shipping on Orders Over $50</span>
+          </div>
+          <div class="flex items-center gap-2 bg-purple-500/20 px-4 py-2 rounded-full">
+            <Icon name="lucide:clock" size="1.5rem" class="text-purple-400" />
+            <span>Limited Time Halloween Deals</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container">
+      <!-- Halloween Categories -->
+      <div class="mb-16">
+        <h2 class="text-3xl font-bold text-center mb-12">🕸️ Halloween Categories</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div class="halloween-category-card text-center p-6">
+            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <Icon name="lucide:shirt" size="2.5rem" class="text-white" />
+            </div>
+            <h3 class="text-xl font-bold mb-2 halloween-text-gradient">Costumes</h3>
+            <p class="text-sm text-muted">Spooky outfits for all ages</p>
+          </div>
+
+          <div class="halloween-category-card text-center p-6">
+            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <Icon name="lucide:home" size="2.5rem" class="text-white" />
+            </div>
+            <h3 class="text-xl font-bold mb-2 halloween-text-gradient">Decorations</h3>
+            <p class="text-sm text-muted">Transform your space</p>
+          </div>
+
+          <div class="halloween-category-card text-center p-6">
+            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-green-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <Icon name="lucide:candy" size="2.5rem" class="text-white" />
+            </div>
+            <h3 class="text-xl font-bold mb-2 halloween-text-gradient">Treats</h3>
+            <p class="text-sm text-muted">Delicious Halloween candy</p>
+          </div>
+
+          <div class="halloween-category-card text-center p-6">
+            <div class="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <Icon name="lucide:sparkles" size="2.5rem" class="text-white" />
+            </div>
+            <h3 class="text-xl font-bold mb-2 halloween-text-gradient">Accessories</h3>
+            <p class="text-sm text-muted">Perfect finishing touches</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold mb-6">🎃 Featured Halloween Products</h2>
+        <p class="text-muted mb-8">
+          {halloweenProducts.length} spooky product{halloweenProducts.length !== 1 ? 's' : ''} to make your Halloween unforgettable
+        </p>
+
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {productsWithImages.map((product) => (
+            <div class="halloween-product-card">
+              <Card
+                imageComponent={product.featuredImage}
+                url={`/category/${product.data.category}/product/${createProductSlug(product.data.title)}`}
+                title={product.data.title}
+                headingLevel="h3"
+                footer={
+                  <div class="flex items-center justify-between">
+                    <span class="text-lg font-bold text-orange-600">{product.data.price}</span>
+                    <span class="halloween-badge">Halloween Special</span>
+                  </div>
+                }
+                fullHeight={true}
+              >
+              <div class="mb-4">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  {product.data.tags?.map((tag: string) => (
+                    <Badge variant="secondary" class="bg-orange-100 text-orange-800">{tag}</Badge>
+                  ))}
+                </div>
+                <div class="flex items-center gap-2 text-sm text-muted">
+                  <Icon name="lucide:star" size="1rem" class="text-yellow-500" />
+                  <span>Halloween Bestseller</span>
+                </div>
+              </div>
+
+              {product.data.description}
+
+              <div class="mt-6 p-4 bg-gradient-to-r from-orange-50 to-purple-50 dark:from-orange-900/20 dark:to-purple-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                <div class="flex items-center gap-2 text-orange-800 dark:text-orange-200">
+                  <Icon name="lucide:zap" size="1rem" />
+                  <span class="font-semibold">Halloween Special Offer!</span>
+                </div>
+                <p class="text-sm mt-1">Perfect for your spooky celebrations</p>
+              </div>
+            </Card>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Halloween Tips Section -->
+      <div class="mt-16 bg-gradient-to-br from-orange-50 via-red-50 to-purple-50 dark:from-orange-900/20 dark:via-red-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-orange-200 dark:border-orange-800">
+        <h2 class="text-3xl font-bold mb-8 text-center">🦇 Halloween Planning Tips</h2>
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 bg-orange-500 rounded-full flex items-center justify-center">
+              <Icon name="lucide:home" size="2rem" class="text-white" />
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Home Decoration</h3>
+            <p class="text-muted">Create a welcoming yet spooky atmosphere with strategic lighting and decorations that won't scare away younger trick-or-treaters.</p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 bg-purple-500 rounded-full flex items-center justify-center">
+              <Icon name="lucide:users" size="2rem" class="text-white" />
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Costume Selection</h3>
+            <p class="text-muted">Choose costumes that are comfortable for all-night wear and appropriate for your community's Halloween traditions.</p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 bg-green-500 rounded-full flex items-center justify-center">
+              <Icon name="lucide:candy" size="2rem" class="text-white" />
+            </div>
+            <h3 class="text-xl font-semibold mb-3">Treat Preparation</h3>
+            <p class="text-muted">Stock up on allergy-friendly treats and have a mix of chocolate and non-chocolate options for different preferences.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Categories -->
+      <div class="mt-12 text-center">
+        <Link href="/categories" isButton type="outline" class="mr-4">
+          <Icon name="lucide:arrow-left" size="1rem" />
+          Back to All Categories
+        </Link>
+        <Link href="/contact" isButton type="primary">
+          Get Halloween Help
+          <Icon name="lucide:external-link" size="1rem" />
+        </Link>
+      </div>
+    </div>
+  </section>
+</DefaultLayout>
+
+<style>
+  /* Halloween Theme Variables */
+  :root {
+    --halloween-orange: #ff6b35;
+    --halloween-purple: #8b5cf6;
+    --halloween-red: #ef4444;
+    --halloween-yellow: #fbbf24;
+    --halloween-black: #1a1a1a;
+  }
+
+  /* Animated Halloween Header */
+  .halloween-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .halloween-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+    animation: halloweenPulse 8s ease-in-out infinite;
+  }
+
+  .halloween-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    animation: halloweenFloat 20s linear infinite;
+  }
+
+  @keyframes halloweenPulse {
+    0%, 100% {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes halloweenFloat {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-20px) rotate(360deg); }
+  }
+
+  /* Floating Halloween Icons */
+  .floating-icon {
+    position: absolute;
+    animation: float 6s ease-in-out infinite;
+    z-index: 1;
+  }
+
+  .floating-icon:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+
+  .floating-icon:nth-child(2) {
+    top: 20%;
+    right: 15%;
+    animation-delay: 2s;
+  }
+
+  .floating-icon:nth-child(3) {
+    bottom: 30%;
+    left: 20%;
+    animation-delay: 4s;
+  }
+
+  .floating-icon:nth-child(4) {
+    bottom: 20%;
+    right: 25%;
+    animation-delay: 1s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+  }
+
+  /* Halloween Category Cards */
+  .halloween-category-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg, var(--halloween-orange), var(--halloween-purple)) 1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .halloween-category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255, 165, 0, 0.05) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .halloween-category-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(255, 107, 53, 0.2), 0 0 0 1px var(--halloween-orange);
+  }
+
+  .halloween-category-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Halloween Product Cards */
+  .halloween-product-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--halloween-orange);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .halloween-product-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+      rgba(255, 107, 53, 0.1) 0%,
+      rgba(139, 92, 246, 0.1) 50%,
+      rgba(239, 68, 68, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .halloween-product-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(255, 107, 53, 0.25);
+    border-color: var(--halloween-purple);
+  }
+
+  .halloween-product-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Halloween Special Badge */
+  .halloween-badge {
+    background: linear-gradient(135deg, var(--halloween-red), var(--halloween-orange));
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    animation: halloweenGlow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes halloweenGlow {
+    from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.5); }
+    to { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+  }
+
+  /* Halloween Tips Section */
+  .halloween-tips {
+    background: linear-gradient(135deg,
+      rgba(255, 107, 53, 0.1) 0%,
+      rgba(139, 92, 246, 0.1) 25%,
+      rgba(239, 68, 68, 0.1) 50%,
+      rgba(251, 191, 36, 0.1) 75%,
+      rgba(255, 107, 53, 0.1) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--halloween-orange);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .halloween-tips::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(circle at 25% 25%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+    animation: halloweenPulse 6s ease-in-out infinite;
+  }
+
+  /* Halloween Icon Circles */
+  .halloween-icon-circle {
+    background: linear-gradient(135deg, var(--halloween-orange), var(--halloween-red));
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .halloween-icon-circle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(255, 107, 53, 0.6);
+  }
+
+  /* Halloween Text Gradient */
+  .halloween-text-gradient {
+    background: linear-gradient(135deg, var(--halloween-orange), var(--halloween-red), var(--halloween-purple));
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Responsive Halloween Styles */
+  @media (max-width: 768px) {
+    .halloween-header h1 {
+      font-size: 2.5rem !important;
+    }
+
+    .floating-icon {
+      display: none;
+    }
+
+    .halloween-category-card {
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* Dark mode adjustments for Halloween */
+  @media (prefers-color-scheme: dark) {
+    .halloween-category-card,
+    .halloween-product-card {
+      background: linear-gradient(135deg, rgba(30, 30, 30, 0.95) 0%, rgba(20, 20, 20, 0.9) 100%);
+      border-color: var(--halloween-orange);
+    }
+
+    .halloween-tips {
+      background: linear-gradient(135deg,
+        rgba(255, 107, 53, 0.2) 0%,
+        rgba(139, 92, 246, 0.2) 25%,
+        rgba(239, 68, 68, 0.2) 50%,
+        rgba(251, 191, 36, 0.2) 75%,
+        rgba(255, 107, 53, 0.2) 100%);
+    }
+  }
+</style>
